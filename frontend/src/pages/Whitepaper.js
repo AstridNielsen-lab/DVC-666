@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaFileAlt } from 'react-icons/fa';
+import Logo from '../components/Logo';
 
 const Whitepaper = () => {
   return (
@@ -12,7 +13,7 @@ const Whitepaper = () => {
         transition={{ duration: 0.8 }}
       >
         <WhitepaperHeader>
-          <FaFileAlt />
+          <Logo size="60px" color="#8B0000" />
           <h1>Technical Whitepaper</h1>
           <p>Deep dive into Devil's Coin technology and tokenomics</p>
         </WhitepaperHeader>

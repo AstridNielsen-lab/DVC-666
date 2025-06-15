@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaChartLine } from 'react-icons/fa';
+import Logo from '../components/Logo';
 
 const Dashboard = () => {
   return (
@@ -12,7 +13,7 @@ const Dashboard = () => {
         transition={{ duration: 0.8 }}
       >
         <DashboardHeader>
-          <FaChartLine />
+          <Logo size="60px" color="#8B0000" />
           <h1>Dashboard</h1>
           <p>Connect your wallet to view your DVC portfolio</p>
         </DashboardHeader>

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaInfoCircle } from 'react-icons/fa';
+import Logo from '../components/Logo';
 
 const About = () => {
   return (
@@ -12,7 +13,7 @@ const About = () => {
         transition={{ duration: 0.8 }}
       >
         <AboutHeader>
-          <FaInfoCircle />
+          <Logo size="60px" color="#8B0000" />
           <h1>About Devil's Coin</h1>
           <p>Learn more about our project and mission</p>
         </AboutHeader>

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaFire, FaBars, FaTimes, FaWallet } from 'react-icons/fa';
+import { FaBars, FaTimes, FaWallet } from 'react-icons/fa';
+import Logo from './Logo';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,13 +50,13 @@ const Navbar = () => {
   return (
     <NavContainer>
       <NavContent>
-        <Logo as={Link} to="/">
-          <FaFire />
+        <LogoContainer as={Link} to="/">
+          <Logo size="40px" color="#8B0000" />
           <LogoText>
             Devil's Coin
             <LogoSubtext>DVC</LogoSubtext>
           </LogoText>
-        </Logo>
+        </LogoContainer>
 
         <NavItems isOpen={isOpen}>
           {navItems.map((item) => (
@@ -118,7 +119,7 @@ const NavContent = styled.div`
   height: 70px;
 `;
 
-const Logo = styled(motion.div)`
+const LogoContainer = styled(motion.div)`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -131,10 +132,6 @@ const Logo = styled(motion.div)`
   &:hover {
     transform: scale(1.05);
     text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
-  }
-
-  svg {
-    color: #FF4500;
   }
 `;
 

@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaFire, FaCoins, FaRocket, FaShieldAlt, FaChartLine, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import Logo from '../components/Logo';
 
 const Home = () => {
   const [currentPrice, setCurrentPrice] = useState('0.0001');
@@ -40,9 +41,11 @@ const Home = () => {
             transition={{ duration: 0.8 }}
           >
             <HeroTitle>
-              <FireIcon />
-              Devil's Coin
-              <HeroSubtitle>DVC</HeroSubtitle>
+              <Logo size="80px" color="#8B0000" />
+              <TitleText>
+                Devil's Coin
+                <HeroSubtitle>DVC</HeroSubtitle>
+              </TitleText>
             </HeroTitle>
             
             <HeroDescription>
@@ -300,6 +303,12 @@ const HeroTitle = styled.h1`
   justify-content: center;
   gap: 1rem;
   animation: ${glowAnimation} 3s ease-in-out infinite;
+`;
+
+const TitleText = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const FireIcon = styled(FaFire)`
