@@ -56,6 +56,10 @@
     "@types/styled-components": "^5.1.26",
     "source-map-explorer": "^2.5.3"
   },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "proxy": "http://localhost:5000"
 }
 

@@ -4,8 +4,13 @@ backend/
 scripts/
 docs/
 
-# Node modules
+# Keep frontend folder and contents
+!frontend/
+!frontend/**
+
+# Node modules (but keep frontend/node_modules for build)
 node_modules/
+!frontend/node_modules/
 
 # Environment files
 .env
@@ -25,14 +30,16 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Build artifacts
+# Build artifacts (but keep frontend build for deploy)
 build/
 dist/
+!frontend/build/
 
 # Cache
 .cache/
 .next/
 .nuxt/
+frontend/.eslintcache
 
 # Coverage
 coverage/
