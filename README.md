@@ -325,13 +325,33 @@ cd backend
 pm2 start ecosystem.config.js
 ```
 
-#### Frontend (Netlify/Vercel)
+#### Frontend (Vercel)
+```bash
+# Option 1: Deploy via Vercel CLI
+npm i -g vercel
+vercel --prod
+
+# Option 2: Deploy via GitHub (Recommended)
+# 1. Connect your GitHub repo to Vercel
+# 2. Set environment variables in Vercel dashboard:
+#    REACT_APP_API_URL=https://your-api-domain.com
+#    REACT_APP_CONTRACT_ADDRESS=0x...
+#    REACT_APP_CHAIN_ID=1
+# 3. Deploy automatically on push to main
+
+# Option 3: Manual build and deploy
+cd frontend
+npm run build
+vercel --prod --local-config ../vercel.json
+```
+
+#### Frontend (Netlify Alternative)
 ```bash
 # Build for production
 cd frontend
 npm run build
 
-# Deploy to your preferred platform
+# Deploy build folder to Netlify
 ```
 
 ---

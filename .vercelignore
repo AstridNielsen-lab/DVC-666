@@ -1,0 +1,43 @@
+# Ignore everything except frontend
+contracts/
+backend/
+scripts/
+docs/
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+build/
+dist/
+
+# Cache
+.cache/
+.next/
+.nuxt/
+
+# Coverage
+coverage/
+
+# Temporary
+*.tmp
+*.temp
+
