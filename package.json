@@ -1,0 +1,85 @@
+{
+  "name": "devils-coin-ecosystem",
+  "version": "1.0.0",
+  "description": "Devil's Coin - Complete cryptocurrency ecosystem with PoS blockchain",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm run install-contracts && npm run install-backend && npm run install-frontend",
+    "install-contracts": "cd contracts && npm install",
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend && npm install",
+    "build-all": "npm run build-contracts && npm run build-backend && npm run build-frontend",
+    "build-contracts": "cd contracts && npm run compile",
+    "build-backend": "cd backend && echo 'Backend does not require build step'",
+    "build-frontend": "cd frontend && npm run build",
+    "test-all": "npm run test-contracts && npm run test-backend && npm run test-frontend",
+    "test-contracts": "cd contracts && npm test",
+    "test-backend": "cd backend && npm test",
+    "test-frontend": "cd frontend && npm test -- --watchAll=false",
+    "clean": "npm run clean-contracts && npm run clean-backend && npm run clean-frontend",
+    "clean-contracts": "cd contracts && rm -rf node_modules artifacts cache",
+    "clean-backend": "cd backend && rm -rf node_modules",
+    "clean-frontend": "cd frontend && rm -rf node_modules build",
+    "dev": "concurrently \"npm run dev-contracts\" \"npm run dev-backend\" \"npm run dev-frontend\"",
+    "dev-contracts": "cd contracts && npx hardhat node",
+    "dev-backend": "cd backend && npm run dev",
+    "dev-frontend": "cd frontend && npm start",
+    "deploy-local": "cd contracts && npm run deploy:localhost",
+    "deploy-goerli": "cd contracts && npm run deploy:goerli",
+    "deploy-mainnet": "cd contracts && npm run deploy:mainnet",
+    "setup-env": "cp contracts/.env.example contracts/.env && cp backend/.env.example backend/.env && cp frontend/.env.example frontend/.env",
+    "lint": "npm run lint-backend && npm run lint-frontend",
+    "lint-backend": "cd backend && npx eslint . --ext .js",
+    "lint-frontend": "cd frontend && npx eslint src --ext .js,.jsx",
+    "format": "npm run format-backend && npm run format-frontend",
+    "format-backend": "cd backend && npx prettier --write .",
+    "format-frontend": "cd frontend && npx prettier --write src",
+    "audit": "npm audit && cd contracts && npm audit && cd ../backend && npm audit && cd ../frontend && npm audit",
+    "update-deps": "npm update && cd contracts && npm update && cd ../backend && npm update && cd ../frontend && npm update",
+    "docker-build": "docker-compose build",
+    "docker-up": "docker-compose up -d",
+    "docker-down": "docker-compose down",
+    "backup": "node scripts/backup.js",
+    "restore": "node scripts/restore.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0"
+  },
+  "workspaces": [
+    "contracts",
+    "backend",
+    "frontend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/devils-coin.git"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "blockchain",
+    "defi",
+    "staking",
+    "ethereum",
+    "solidity",
+    "react",
+    "nodejs",
+    "web3",
+    "dapp",
+    "smart-contracts",
+    "proof-of-stake"
+  ],
+  "author": "Devil's Coin Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/devils-coin/issues"
+  },
+  "homepage": "https://devilscoin.io",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
+
