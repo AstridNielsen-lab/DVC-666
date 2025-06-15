@@ -74,14 +74,26 @@ This guide provides step-by-step instructions for deploying the Devil's Coin fro
 
 The project includes pre-configured files for Vercel:
 
-### `vercel.json`
+### `vercel.json` (Updated - Optimized for Monorepo)
 ```json
 {
-  "buildCommand": "cd frontend && npm install && npm run build",
+  "buildCommand": "cd frontend && npm ci && npm run build",
   "outputDirectory": "frontend/build",
-  "installCommand": "cd frontend && npm install",
-  "framework": "create-react-app"
+  "installCommand": "npm ci",
+  "devCommand": "cd frontend && npm start",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
+```
+
+### `.nvmrc` (Node.js Version)
+```
+20.11.0
 ```
 
 ### `.vercelignore`
