@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   FaChartLine, FaArrowUp, FaArrowDown, FaFire, FaCoins, 
   FaExchangeAlt, FaWallet, FaEye, FaBolt, FaRocket,
-  FaTrendingUp, FaTrendingDown, FaBullseye, FaGem
+  FaChartBar, FaChartArea, FaBullseye, FaGem
 } from 'react-icons/fa';
 import Logo from '../components/Logo';
 
@@ -227,7 +227,7 @@ const Dashboard = () => {
           
           <StatsGrid>
             <StatItem>
-              <StatItemIcon positive><FaTrendingUp /></StatItemIcon>
+              <StatItemIcon positive><FaChartBar /></StatItemIcon>
               <StatItemData>
                 <StatItemValue>{formatLargeNumber(activeStakers)}</StatItemValue>
                 <StatItemLabel>Active Stakers</StatItemLabel>
