@@ -9,7 +9,7 @@
     "install-backend": "cd backend && npm install",
     "install-frontend": "cd frontend && npm install",
     "build": "cd frontend && npm install && npm run build",
-    "vercel-build": "cd frontend && npm install && npm run build",
+    "vercel-build": "cd frontend && npm install && npm run build && cd .. && xcopy /E /I frontend\\build build",
     "build-all": "npm run build-contracts && npm run build-backend && npm run build-frontend",
     "build-contracts": "cd contracts && npm run compile",
     "build-backend": "cd backend && echo 'Backend does not require build step'",
