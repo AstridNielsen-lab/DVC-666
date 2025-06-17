@@ -4,6 +4,9 @@
 
 ![image](https://github.com/user-attachments/assets/d5b232de-8ff4-4d0b-8af3-31b11ddd101c)
 
+![image](https://github.com/user-attachments/assets/c60506a3-38a5-4cfb-b6f0-82c4b262d1d7)
+
+
 
 **A revolutionary cryptocurrency inspired by the Nine Satanic Keys - Breaking the chains of traditional financial oppression**
 
