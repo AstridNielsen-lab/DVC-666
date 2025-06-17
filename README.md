@@ -93,7 +93,7 @@ DVC666 doesn't worship darkness - it embraces the **shadow of traditional financ
 
 ### 🔗 Blockchain & Token
 - **Custom PoS Blockchain** with 13-second block times
-- **66,666,666 DVC** total supply with 18 decimals
+- **66,666,666 DVC666** total supply with 18 decimals
 - **ERC-20 Compatible** smart contract
 - **Deflationary Mechanics** with token burning
 
@@ -222,19 +222,19 @@ devils-coin/
 
 | Parameter | Value |
 |-----------|-------|
-| **Name** | Devil's Coin |
-| **Symbol** | DVC |
+| **Name** | Devil's Coin 666 |
+| **Symbol** | DVC666 |
 | **Decimals** | 18 |
-| **Total Supply** | 66,666,666 DVC |
+| **Total Supply** | 66,666,666 DVC666 |
 | **Consensus** | Proof of Stake |
 | **Block Time** | 13 seconds |
 
 ### Token Distribution
 
-- **20%** - Presale (13,333,333 DVC)
-- **30%** - Staking Rewards (20,000,000 DVC)
-- **40%** - Liquidity Pool (26,666,667 DVC)
-- **10%** - Team & Development (6,666,666 DVC)
+- **20%** - Presale (13,333,333 DVC666)
+- **30%** - Staking Rewards (20,000,000 DVC666)
+- **40%** - Liquidity Pool (26,666,667 DVC666)
+- **10%** - Team & Development (6,666,666 DVC666)
 
 ### Staking Features
 
@@ -531,12 +531,52 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## 📊 Recent Updates & Features
+
+### ✨ Latest Additions (v1.2.0)
+
+#### 🎯 Advanced Trading Dashboard
+- **Real-time Price Charts** - Live DVC666/ETH price tracking with historical data
+- **Technical Analysis Tools** - RSI, MACD, Bollinger Bands, and support/resistance levels
+- **Volume Analytics** - 24h trading volume visualization with bar charts
+- **Market Statistics** - Market cap, circulating supply, and staking metrics
+- **Trading Indicators** - Professional-grade technical indicators with buy/sell signals
+- **Live Data Updates** - Real-time price feeds and market data via WebSocket
+
+#### 🎨 Enhanced Visual Design
+- **Inverted Pentagram Logo** - Updated brand identity with 2 points up, energy points, and glowing effects
+- **Smooth Animations** - Enhanced hover effects and rotation animations
+- **Professional UI** - Dark theme with devilish aesthetics and glass morphism
+- **Responsive Design** - Optimized for all device sizes and screen resolutions
+
+#### 🔧 Technical Improvements
+- **Vercel Deployment** - Optimized monorepo configuration for seamless deployment
+- **React Icons Fix** - Resolved import issues for production builds
+- **Performance Optimization** - Improved load times and rendering efficiency
+- **Code Quality** - Enhanced error handling and type safety
+
+#### 📈 Trading Features
+- **Price Simulation** - Real-time price movement simulation for demonstration
+- **Chart Controls** - 1H, 4H, 1D, 1W timeframe selection
+- **Support/Resistance Lines** - Visual price level indicators
+- **Volume Bars** - Trading volume visualization alongside price data
+
+### 🚀 Next Features Coming Soon
+- **MetaMask Integration** - Direct wallet connection and trading
+- **Real Blockchain Data** - Integration with live DVC666 contract
+- **Advanced Order Types** - Limit orders, stop-loss, and market orders
+- **Portfolio Management** - Holdings tracking and P&L analysis
+
+---
+
 ## 🔮 Roadmap
 
 ### Phase 1: Foundation (Current)
 - [x] Smart contract development
 - [x] Backend API implementation
 - [x] Frontend dApp creation
+- [x] Advanced trading dashboard
+- [x] Logo design and branding
 - [ ] Security audits
 - [ ] Testnet deployment
 
