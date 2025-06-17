@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  console.log("🔥 Deploying Devil's Coin (DVC) Contract...");
+  console.log("🔥 Deploying Devil's Coin 666 (DVC666) Contract...");
   
   // Get the deployer account
   const [deployer] = await ethers.getSigners();
@@ -14,7 +14,7 @@ async function main() {
   
   await devilsCoin.deployed();
   
-  console.log("\n🎯 Devil's Coin deployed to:", devilsCoin.address);
+  console.log("\n🎯 Devil's Coin 666 deployed to:", devilsCoin.address);
   console.log("📊 Transaction hash:", devilsCoin.deployTransaction.hash);
   
   // Verify deployment
@@ -27,15 +27,19 @@ async function main() {
   console.log("Name:", name);
   console.log("Symbol:", symbol);
   console.log("Decimals:", decimals);
-  console.log("Total Supply:", ethers.utils.formatEther(totalSupply), "DVC");
+  console.log("Total Supply:", ethers.utils.formatEther(totalSupply), "DVC666");
   console.log("Owner:", await devilsCoin.owner());
   
   // Get presale info
   const presaleInfo = await devilsCoin.getPresaleInfo();
+  const minMaxPurchase = await devilsCoin.getMinMaxPurchase();
   console.log("\n💰 Presale Info:");
-  console.log("Price:", ethers.utils.formatEther(presaleInfo.price), "ETH per DVC");
-  console.log("Remaining:", ethers.utils.formatEther(presaleInfo.remaining), "DVC");
+  console.log("Price:", ethers.utils.formatEther(presaleInfo.price), "ETH per DVC666");
+  console.log("Remaining:", ethers.utils.formatEther(presaleInfo.remaining), "DVC666");
+  console.log("Progress:", await devilsCoin.getPresaleProgress(), "%");
   console.log("Active:", presaleInfo.active);
+  console.log("Min Purchase:", ethers.utils.formatEther(minMaxPurchase.min), "ETH");
+  console.log("Max Purchase:", ethers.utils.formatEther(minMaxPurchase.max), "ETH");
   
   // Save deployment info
   const deploymentInfo = {
@@ -67,6 +71,15 @@ async function main() {
   
   console.log("\n✅ Deployment completed successfully!");
   console.log("📄 Deployment info saved to:", `deployments/${hre.network.name}-deployment.json`);
+  
+  // MetaMask integration info
+  console.log("\n🦊 MetaMask Integration:");
+  console.log("Contract Address:", devilsCoin.address);
+  console.log("Symbol: DVC666");
+  console.log("Decimals: 18");
+  console.log("\n💸 Ready for Presale!");
+  console.log("Presale is ACTIVE and ready to accept purchases");
+  console.log("Price: 0.0001 ETH per DVC666 token");
   
   // Verification instructions
   if (hre.network.name !== "hardhat" && hre.network.name !== "localhost") {

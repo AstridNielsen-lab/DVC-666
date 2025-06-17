@@ -53,8 +53,8 @@ const Navbar = () => {
         <LogoContainer as={Link} to="/">
           <Logo size="40px" color="#8B0000" />
           <LogoText>
-            Devil's Coin
-            <LogoSubtext>DVC</LogoSubtext>
+            Devil's Coin 666
+            <LogoSubtext>DVC666</LogoSubtext>
           </LogoText>
         </LogoContainer>
 

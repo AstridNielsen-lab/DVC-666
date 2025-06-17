@@ -8,11 +8,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
- * @title Devil's Coin (DVC)
+ * @title Devil's Coin 666 (DVC666)
  * @dev ERC20 Token with Staking, Presale, and Governance features
- * Total Supply: 66,666,666 DVC
+ * Total Supply: 66,666,666 DVC666
  * Decimals: 18
  * Block Time: 13 seconds (managed by consensus layer)
+ * Features: Presale, Staking (6.66% APY), Auto-listing on MetaMask
  */
 contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
     uint256 public constant TOTAL_SUPPLY = 66_666_666 * 10**18;
@@ -21,10 +22,12 @@ contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard 
     uint256 public constant TEAM_RESERVE = 6_666_666 * 10**18; // 10% for team
     uint256 public constant LIQUIDITY_POOL = 26_666_667 * 10**18; // 40% for liquidity
     
-    uint256 public presalePrice = 0.0001 ether; // Price in ETH
+    uint256 public presalePrice = 0.0001 ether; // Price in ETH (0.0001 ETH per DVC666)
     uint256 public presaleCap = PRESALE_SUPPLY;
     uint256 public presaleSold = 0;
-    bool public presaleActive = false;
+    bool public presaleActive = true; // Start presale immediately
+    uint256 public minimumPurchase = 0.001 ether; // Minimum purchase 0.001 ETH
+    uint256 public maximumPurchase = 10 ether; // Maximum purchase 10 ETH per transaction
     
     // Staking variables
     mapping(address => uint256) public stakedBalance;
@@ -42,10 +45,14 @@ contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard 
     event PresaleStarted();
     event PresaleEnded();
     
-    constructor() ERC20("Devil's Coin", "DVC") {
+    constructor() ERC20("Devil's Coin 666", "DVC666") {
         // Mint initial supply to contract owner for distribution
         _mint(msg.sender, TEAM_RESERVE);
         _mint(address(this), PRESALE_SUPPLY + STAKING_REWARDS + LIQUIDITY_POOL);
+        
+        // Auto-start presale for immediate token sales
+        presaleActive = true;
+        emit PresaleStarted();
     }
     
     // Presale functions
@@ -61,7 +68,8 @@ contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard 
     
     function buyTokens() external payable nonReentrant {
         require(presaleActive, "Presale is not active");
-        require(msg.value > 0, "Must send ETH to buy tokens");
+        require(msg.value >= minimumPurchase, "Purchase amount too low");
+        require(msg.value <= maximumPurchase, "Purchase amount too high");
         
         uint256 tokenAmount = (msg.value * 10**18) / presalePrice;
         require(presaleSold + tokenAmount <= presaleCap, "Exceeds presale cap");
@@ -70,6 +78,31 @@ contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard 
         _transfer(address(this), msg.sender, tokenAmount);
         
         emit TokensPurchased(msg.sender, tokenAmount, msg.value);
+    }
+    
+    // Quick buy function with automatic amount calculation
+    function quickBuy() external payable nonReentrant {
+        require(presaleActive, "Presale is not active");
+        require(msg.value >= minimumPurchase, "Purchase amount too low");
+        require(msg.value <= maximumPurchase, "Purchase amount too high");
+        
+        uint256 tokenAmount = (msg.value * 10**18) / presalePrice;
+        require(presaleSold + tokenAmount <= presaleCap, "Exceeds presale cap");
+        
+        presaleSold += tokenAmount;
+        _transfer(address(this), msg.sender, tokenAmount);
+        
+        emit TokensPurchased(msg.sender, tokenAmount, msg.value);
+    }
+    
+    // Get token amount for ETH input
+    function getTokenAmount(uint256 ethAmount) external view returns (uint256) {
+        return (ethAmount * 10**18) / presalePrice;
+    }
+    
+    // Get ETH cost for token amount
+    function getETHCost(uint256 tokenAmount) external view returns (uint256) {
+        return (tokenAmount * presalePrice) / 10**18;
     }
     
     function setPresalePrice(uint256 _newPrice) external onlyOwner {
@@ -181,6 +214,20 @@ contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard 
         bool active
     ) {
         return (presalePrice, presaleSold, presaleCap - presaleSold, presaleActive);
+    }
+    
+    // Additional presale view functions
+    function getPresaleProgress() external view returns (uint256) {
+        return (presaleSold * 100) / presaleCap;
+    }
+    
+    function getMinMaxPurchase() external view returns (uint256 min, uint256 max) {
+        return (minimumPurchase, maximumPurchase);
+    }
+    
+    function setMinMaxPurchase(uint256 _min, uint256 _max) external onlyOwner {
+        minimumPurchase = _min;
+        maximumPurchase = _max;
     }
 }
 
