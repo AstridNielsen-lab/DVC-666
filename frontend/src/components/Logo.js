@@ -11,55 +11,67 @@ const Logo = ({ size = '40px', color = '#8B0000' }) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Círculo externo com brilho */}
+        {/* Círculo externo com brilho infernal */}
         <circle
           cx="50"
           cy="50"
-          r="47"
+          r="45"
           stroke={color}
-          strokeWidth="2"
+          strokeWidth="2.5"
           fill="none"
+          opacity="0.9"
+        />
+        
+        {/* Pentagrama invertido - estrela de 5 pontas com 2 pontas para cima */}
+        <path
+          d="M50 15 L42.4 35.2 L18.1 35.2 L37.6 49.6 L30 69.8 L50 55.4 L70 69.8 L62.4 49.6 L81.9 35.2 L57.6 35.2 Z"
+          fill={color}
+          stroke={color}
+          strokeWidth="1.8"
+          fillOpacity="0.95"
+        />
+        
+        {/* Contorno interno da estrela invertida */}
+        <path
+          d="M50 22 L44.8 37.5 L26.8 37.5 L41.0 48.0 L35.8 63.5 L50 53.0 L64.2 63.5 L59.0 48.0 L73.2 37.5 L55.2 37.5 Z"
+          fill="none"
+          stroke={color}
+          strokeWidth="2.2"
           opacity="0.8"
         />
         
-        {/* Pentagrama invertido - 2 pontas para cima */}
-        <path
-          d="M50 20 L38.8 35 L20 30 L32 45 L20 60 L38.8 55 L50 70 L61.2 55 L80 60 L68 45 L80 30 L61.2 35 Z"
+        {/* Centro da estrela com símbolo do mal */}
+        <circle
+          cx="50"
+          cy="48"
+          r="6"
           fill={color}
-          stroke={color}
-          strokeWidth="1.5"
-          fillOpacity="0.9"
+          opacity="0.9"
         />
         
-        {/* Estrela invertida interna - mais definida */}
-        <path
-          d="M50 25 L42 40 L25 35 L37 47.5 L25 60 L42 55 L50 70 L58 55 L75 60 L63 47.5 L75 35 L58 40 Z"
-          fill="none"
-          stroke={color}
-          strokeWidth="2"
+        {/* Pontos de energia nas 5 pontas */}
+        <circle cx="50" cy="15" r="2.5" fill="#FF4500" opacity="0.9" /> {/* Ponta superior */}
+        <circle cx="30" cy="69.8" r="2.5" fill="#FF4500" opacity="0.9" /> {/* Ponta inferior esquerda */}
+        <circle cx="70" cy="69.8" r="2.5" fill="#FF4500" opacity="0.9" /> {/* Ponta inferior direita */}
+        <circle cx="18.1" cy="35.2" r="2.5" fill="#FF4500" opacity="0.9" /> {/* Ponta esquerda */}
+        <circle cx="81.9" cy="35.2" r="2.5" fill="#FF4500" opacity="0.9" /> {/* Ponta direita */}
+        
+        {/* Efeito de brilho interior diabólico */}
+        <circle
+          cx="50"
+          cy="48"
+          r="3"
+          fill="#FF6600"
           opacity="0.7"
         />
         
-        {/* Centro da estrela */}
+        {/* Pequeno núcleo central */}
         <circle
           cx="50"
-          cy="47.5"
-          r="8"
-          fill={color}
+          cy="48"
+          r="1.5"
+          fill="#FFFF00"
           opacity="0.8"
-        />
-        
-        {/* Pontos de energia nas pontas superiores */}
-        <circle cx="42" cy="40" r="2" fill={color} opacity="0.9" />
-        <circle cx="58" cy="40" r="2" fill={color} opacity="0.9" />
-        
-        {/* Efeito de brilho interior */}
-        <circle
-          cx="50"
-          cy="47.5"
-          r="4"
-          fill="#FF4500"
-          opacity="0.6"
         />
       </svg>
     </LogoContainer>
