@@ -311,10 +311,6 @@ const TitleText = styled.div`
   align-items: center;
 `;
 
-const FireIcon = styled(FaFire)`
-  color: #FF4500;
-  animation: ${floatAnimation} 2s ease-in-out infinite;
-`;
 
 const HeroSubtitle = styled.span`
   display: block;

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { motion } from 'framer-motion';
 import { 
   FaChartLine, FaArrowUp, FaArrowDown, FaFire, FaCoins, 
-  FaExchangeAlt, FaWallet, FaEye, FaBolt, FaRocket,
-  FaChartBar, FaChartArea, FaBullseye, FaGem
+  FaExchangeAlt, FaWallet, FaBolt, FaRocket,
+  FaChartBar, FaBullseye, FaGem
 } from 'react-icons/fa';
 import Logo from '../components/Logo';
 
@@ -14,10 +13,10 @@ const Dashboard = () => {
   const [volume24h, setVolume24h] = useState(156789);
   const [marketCap, setMarketCap] = useState(6666.666);
   const [totalSupply] = useState(66666666);
-  const [circulatingSupply, setCirculatingSupply] = useState(13333333);
-  const [stakingRewards, setStakingRewards] = useState(6.66);
-  const [activeStakers, setActiveStakers] = useState(666);
-  const [burnedTokens, setBurnedTokens] = useState(666666);
+  const [circulatingSupply] = useState(13333333);
+  const [stakingRewards] = useState(6.66);
+  const [activeStakers] = useState(666);
+  const [burnedTokens] = useState(666666);
   const [priceHistory, setPriceHistory] = useState([]);
   const [technicalIndicators, setTechnicalIndicators] = useState({
     rsi: 45.8,
@@ -820,26 +819,6 @@ const LevelValue = styled.span`
   color: ${props => props.positive ? '#00FF88' : '#FF4444'};
 `;
 
-// Legacy components (keeping for compatibility)
-const DashboardContent = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
-  background: ${props => props.theme.colors.glass.background};
-  backdrop-filter: ${props => props.theme.colors.glass.backdropFilter};
-  border: ${props => props.theme.colors.glass.border};
-  border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
-  
-  h2 {
-    color: ${props => props.theme.colors.primary};
-    margin-bottom: 1rem;
-  }
-  
-  p {
-    color: ${props => props.theme.colors.text.secondary};
-  }
-`;
 
 export default Dashboard;
 

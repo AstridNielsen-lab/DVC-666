@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaFire, FaRocket, FaWallet, FaEthereum, FaCheck, FaSpinner } from 'react-icons/fa';
@@ -30,14 +30,32 @@ const Presale = () => {
     active: true
   });
   const [contract, setContract] = useState(null);
-  const [provider, setProvider] = useState(null);
 
-  useEffect(() => {
-    checkWalletConnection();
-    calculateTokenAmount();
-  }, [ethAmount]);
+  const loadPresaleInfo = useCallback(async (contractInstance) => {
+    try {
+      const info = await contractInstance.getPresaleInfo();
+      setPresaleInfo({
+        price: ethers.utils.formatEther(info.price),
+        sold: ethers.utils.formatEther(info.sold),
+        remaining: ethers.utils.formatEther(info.remaining),
+        active: info.active
+      });
+    } catch (error) {
+      console.error('Error loading presale info:', error);
+    }
+  }, []);
 
-  const checkWalletConnection = async () => {
+  const initContract = useCallback(async () => {
+    if (window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = web3Provider.getSigner();
+      const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, PRESALE_ABI, signer);
+      setContract(contractInstance);
+      await loadPresaleInfo(contractInstance);
+    }
+  }, [loadPresaleInfo]);
+
+  const checkWalletConnection = useCallback(async () => {
     if (window.ethereum) {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -50,39 +68,19 @@ const Presale = () => {
         console.error('Error checking wallet:', error);
       }
     }
-  };
+  }, [initContract]);
 
-  const initContract = async () => {
-    if (window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      setProvider(web3Provider);
-      const signer = web3Provider.getSigner();
-      const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, PRESALE_ABI, signer);
-      setContract(contractInstance);
-      await loadPresaleInfo(contractInstance);
-    }
-  };
-
-  const loadPresaleInfo = async (contractInstance) => {
-    try {
-      const info = await contractInstance.getPresaleInfo();
-      setPresaleInfo({
-        price: ethers.utils.formatEther(info.price),
-        sold: ethers.utils.formatEther(info.sold),
-        remaining: ethers.utils.formatEther(info.remaining),
-        active: info.active
-      });
-    } catch (error) {
-      console.error('Error loading presale info:', error);
-    }
-  };
-
-  const calculateTokenAmount = () => {
+  const calculateTokenAmount = useCallback(() => {
     if (ethAmount && presaleInfo.price) {
       const tokens = parseFloat(ethAmount) / parseFloat(presaleInfo.price);
       setTokenAmount(tokens.toFixed(0));
     }
-  };
+  }, [ethAmount, presaleInfo.price]);
+
+  useEffect(() => {
+    checkWalletConnection();
+    calculateTokenAmount();
+  }, [checkWalletConnection, calculateTokenAmount]);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -301,33 +299,6 @@ const PresaleContent = styled.div`
   margin: 0 auto;
 `;
 
-const PresaleCard = styled.div`
-  background: ${props => props.theme.colors.glass.background};
-  backdrop-filter: ${props => props.theme.colors.glass.backdropFilter};
-  border: ${props => props.theme.colors.glass.border};
-  border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
-  
-  h2 {
-    color: ${props => props.theme.colors.primary};
-    margin-bottom: 2rem;
-  }
-  
-  ul {
-    text-align: left;
-    margin-bottom: 2rem;
-    
-    li {
-      margin-bottom: 1rem;
-      color: ${props => props.theme.colors.text.secondary};
-      
-      strong {
-        color: ${props => props.theme.colors.text.primary};
-      }
-    }
-  }
-`;
 
 const PresaleStatus = styled.div`
   display: inline-block;

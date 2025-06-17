@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FaInfoCircle } from 'react-icons/fa';
 import Logo from '../components/Logo';
 
 const About = () => {
