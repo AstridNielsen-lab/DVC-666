@@ -5,7 +5,8 @@ import { FaFire, FaRocket, FaWallet, FaEthereum, FaCheck, FaSpinner } from 'reac
 import { ethers } from 'ethers';
 import toast from 'react-hot-toast';
 
-const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || '0x...';
+// Contract address - will be updated with actual deployed address
+const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || null;
 const PRESALE_ABI = [
   "function buyTokens() external payable",
   "function getTokenAmount(uint256 ethAmount) external view returns (uint256)",
@@ -30,6 +31,7 @@ const Presale = () => {
     active: true
   });
   const [contract, setContract] = useState(null);
+  const [contractError, setContractError] = useState(null);
 
   const loadPresaleInfo = useCallback(async (contractInstance) => {
     try {
@@ -46,12 +48,39 @@ const Presale = () => {
   }, []);
 
   const initContract = useCallback(async () => {
+    if (!CONTRACT_ADDRESS) {
+      setContractError('Contract address not configured');
+      console.warn('Contract address not configured');
+      return;
+    }
+    
+    if (!ethers.utils.isAddress(CONTRACT_ADDRESS)) {
+      setContractError('Invalid contract address format');
+      console.error('Invalid contract address:', CONTRACT_ADDRESS);
+      return;
+    }
+    
     if (window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = web3Provider.getSigner();
-      const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, PRESALE_ABI, signer);
-      setContract(contractInstance);
-      await loadPresaleInfo(contractInstance);
+      try {
+        const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = web3Provider.getSigner();
+        const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, PRESALE_ABI, signer);
+        
+        // Test if contract exists by calling a simple view function
+        await contractInstance.name();
+        
+        setContract(contractInstance);
+        setContractError(null);
+        await loadPresaleInfo(contractInstance);
+      } catch (error) {
+        console.error('Error initializing contract:', error);
+        setContractError('Contract not deployed or network mismatch');
+        if (error.message.includes('ENS')) {
+          setContractError('Invalid contract address - ENS resolution failed');
+        }
+      }
+    } else {
+      setContractError('MetaMask not detected');
     }
   }, [loadPresaleInfo]);
 
@@ -208,7 +237,21 @@ const Presale = () => {
           <PurchaseCard>
             <h2>💰 Buy DVC666 Tokens</h2>
             
-            {!isConnected ? (
+            {contractError ? (
+              <ErrorSection>
+                <ErrorIcon>⚠️</ErrorIcon>
+                <ErrorTitle>Contract Not Available</ErrorTitle>
+                <ErrorMessage>{contractError}</ErrorMessage>
+                <ErrorNote>
+                  Please ensure:
+                  <ul>
+                    <li>The contract is deployed</li>
+                    <li>You're connected to the correct network</li>
+                    <li>MetaMask is installed and unlocked</li>
+                  </ul>
+                </ErrorNote>
+              </ErrorSection>
+            ) : !isConnected ? (
               <ConnectSection>
                 <ConnectButton onClick={connectWallet}>
                   <FaWallet /> Connect MetaMask
@@ -521,6 +564,47 @@ const AddTokenButton = styled.button`
   &:hover {
     background: rgba(139, 0, 0, 0.2);
     transform: translateY(-1px);
+  }
+`;
+
+const ErrorSection = styled.div`
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const ErrorIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 1rem;
+`;
+
+const ErrorTitle = styled.h3`
+  color: #ff4444;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+`;
+
+const ErrorMessage = styled.p`
+  color: ${props => props.theme.colors.text.secondary};
+  margin-bottom: 1rem;
+  font-size: 1rem;
+`;
+
+const ErrorNote = styled.div`
+  color: ${props => props.theme.colors.text.secondary};
+  font-size: 0.9rem;
+  text-align: left;
+  
+  ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+  
+  li {
+    margin-bottom: 0.25rem;
   }
 `;
 
