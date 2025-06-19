@@ -2,7 +2,6 @@
   "name": "devils-coin-frontend",
   "version": "1.0.0",
   "description": "Devil's Coin Frontend - Dark themed cryptocurrency platform",
-  "homepage": "https://astridnielsen-lab.github.io/DVC-666",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

@@ -19,12 +19,12 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/DVC-666/",
+  "start_url": ".",
   "display": "standalone",
   "theme_color": "#8B0000",
   "background_color": "#0a0a0a",
   "orientation": "portrait-primary",
-  "scope": "/DVC-666/",
+  "scope": "/",
   "lang": "en",
   "categories": ["finance", "productivity", "business"]
 }
