@@ -14,26 +14,34 @@
 
 ### 🚨 **EVENTO PRESALE - APENAS 8 CHAVES RESTANTES**
 
-| **Fase** | **Tokens Disponíveis** | **Preço** | **Bônus** | **Status** |
-|----------|------------------------|-----------|-----------|------------|
-| **Chave 1** | 6,666,666 DVC666 | **$0.001** | **66% Bônus** | **🔥 ATIVA** |
-| Chave 2 | 3,333,333 DVC666 | $0.0025 | 33% Bônus | 🔒 Bloqueada |
-| Chave 3 | 2,222,222 DVC666 | $0.005 | 22% Bônus | 🔒 Bloqueada |
-| Chave 4 | 1,111,111 DVC666 | $0.01 | 11% Bônus | 🔒 Bloqueada |
+| **Fase** | **Tokens Disponíveis** | **Preço ETH** | **Preço USD** | **Bônus** | **Status** |
+|----------|------------------------|---------------|---------------|-----------|------------|
+| **Chave 1** | 6,666,666 DVC666 | **0.00010382 ETH** | **$0.001 USD** | **66% Bônus** | **🔥 ATIVA** |
+| Chave 2 | 3,333,333 DVC666 | 0.00020764 ETH | $0.0025 USD | 33% Bônus | 🔒 Bloqueada |
+| Chave 3 | 2,222,222 DVC666 | 0.00041528 ETH | $0.005 USD | 22% Bônus | 🔒 Bloqueada |
+| Chave 4 | 1,111,111 DVC666 | 0.00083056 ETH | $0.01 USD | 11% Bônus | 🔒 Bloqueada |
 
 ### 💎 **Benefícios da Primeira Chave:**
-- **🎯 Preço Inicial**: $0.001 por DVC666
+- **🎯 Preço Inicial**: 0.00010382 ETH ($0.001 USD) por DVC666
 - **🔥 Bônus de 66%**: Receba 1.66 tokens por cada 1 comprado
 - **⚡ Staking Imediato**: 6.66% APY disponível após compra
 - **🛡️ Contratos Auditados**: Segurança máxima garantida
 - **💰 Liquidez Instantânea**: Tokens disponíveis imediatamente
+- **📊 Valorização Real**: Preço atualizado em tempo real com ETH/USD
+
+### 🦊 **Sistema WalletConnector Avançado:**
+1. **MetaMask Priorizado** - Recomendado com badge especial ✨
+2. **25+ Carteiras Suportadas** - Web3, Mobile, Hardware, Exchanges
+3. **Modal Inteligente** - Não abre nova página, experiência fluida
+4. **Auto-Detecção** - Identifica carteiras instaladas automaticamente
+5. **Multi-Chain** - Ethereum, BSC, Polygon, Arbitrum
 
 ### 🎪 **Como Participar:**
-1. **Conecte sua Carteira** (MetaMask, Trust Wallet, etc.)
-2. **Escolha o Valor** (Mínimo: 0.01 ETH)
-3. **Confirme a Transação** e receba DVC666 + Bônus
-4. **Ative o Staking** para 6.66% APY
-5. **Prepare-se** para as próximas 8 chaves
+1. **Conecte sua Carteira** - MetaMask recomendado (primeiro da lista)
+2. **Escolha o Valor** (Mínimo: 0.001 ETH)
+3. **Confirme a Transação** e receba DVC666 + Bônus de 66%
+4. **Ative o Staking** para 6.66% APY automático
+5. **Acompanhe o Progresso** das próximas 8 chaves até 2027
 
 ---
 
