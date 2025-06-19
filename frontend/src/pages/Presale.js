@@ -91,8 +91,7 @@ const Presale = () => {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
         if (accounts.length > 0) {
-          setIsConnected(true);
-          setAccount(accounts[0]);
+          // wallet state is managed by useWallet hook
           await initContract();
         }
       } catch (error) {
@@ -150,7 +149,7 @@ const Presale = () => {
   };
 
   const buyTokens = async () => {
-    if (!contract || !isConnected) {
+    if (!contract || !wallet.isConnected) {
       toast.error('Please connect your wallet first');
       return;
     }
@@ -476,6 +475,16 @@ const WalletInfo = styled.div`
   border: 1px solid rgba(0, 255, 0, 0.3);
   font-size: 0.9rem;
   color: ${props => props.theme.colors.text.secondary};
+`;
+
+const NetworkBadge = styled.span`
+  background: rgba(139, 0, 0, 0.2);
+  color: #ff4500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(139, 0, 0, 0.3);
 `;
 
 const InputGroup = styled.div`
