@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { FaFire, FaRocket, FaWallet, FaEthereum, FaCheck, FaSpinner } from 'react-icons/fa';
 import { ethers } from 'ethers';
 import toast from 'react-hot-toast';
+import WalletConnector from '../components/WalletConnector';
+import useWallet from '../hooks/useWallet';
 
 // Contract address - will be updated with actual deployed address
 const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || null;
@@ -19,13 +21,13 @@ const PRESALE_ABI = [
 ];
 
 const Presale = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [account, setAccount] = useState('');
+  const wallet = useWallet();
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [ethAmount, setEthAmount] = useState('0.001');
   const [tokenAmount, setTokenAmount] = useState('0');
   const [isLoading, setIsLoading] = useState(false);
   const [presaleInfo, setPresaleInfo] = useState({
-    price: '0.0001',
+    price: '0.00010382',
     sold: '0',
     remaining: '13333333',
     active: true
@@ -207,7 +209,7 @@ const Presale = () => {
         <PresaleHeader>
           <FaFire />
           <h1>DVC666 Presale</h1>
-          <p>Get Devil's Coin 666 tokens at the best price - 0.0001 ETH each!</p>
+          <p>Get DVC666 Coin tokens at the best price - 0.00010382 ETH each!</p>
           <PresaleStatus active={presaleInfo.active}>
             {presaleInfo.active ? '🟢 PRESALE ACTIVE' : '🔴 PRESALE ENDED'}
           </PresaleStatus>
@@ -217,7 +219,7 @@ const Presale = () => {
           <PresaleStats>
             <StatCard>
               <StatLabel>Token Price</StatLabel>
-              <StatValue>0.0001 ETH</StatValue>
+              <StatValue>0.00010382 ETH</StatValue>
             </StatCard>
             <StatCard>
               <StatLabel>Tokens Sold</StatLabel>
@@ -251,17 +253,18 @@ const Presale = () => {
                   </ul>
                 </ErrorNote>
               </ErrorSection>
-            ) : !isConnected ? (
+            ) : !wallet.isConnected ? (
               <ConnectSection>
-                <ConnectButton onClick={connectWallet}>
-                  <FaWallet /> Connect MetaMask
+                <ConnectButton onClick={() => setWalletModalOpen(true)}>
+                  <FaWallet /> Conectar Carteira
                 </ConnectButton>
-                <p>Connect your wallet to participate in the presale</p>
+                <p>Conecte sua carteira para participar da presale</p>
               </ConnectSection>
             ) : (
               <PurchaseSection>
                 <WalletInfo>
-                  <span>Connected: {account.slice(0, 6)}...{account.slice(-4)}</span>
+                  <span>Conectado: {wallet.formattedAddress}</span>
+                  <NetworkBadge>{wallet.networkInfo.name}</NetworkBadge>
                   <FaCheck color="#00ff00" />
                 </WalletInfo>
                 

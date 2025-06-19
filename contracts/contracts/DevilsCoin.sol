@@ -22,7 +22,7 @@ contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard 
     uint256 public constant TEAM_RESERVE = 6_666_666 * 10**18; // 10% for team
     uint256 public constant LIQUIDITY_POOL = 26_666_667 * 10**18; // 40% for liquidity
     
-    uint256 public presalePrice = 0.0001 ether; // Price in ETH (0.0001 ETH per DVC666)
+    uint256 public presalePrice = 0.00010382 ether; // Price in ETH (0.00010382 ETH per DVC666)
     uint256 public presaleCap = PRESALE_SUPPLY;
     uint256 public presaleSold = 0;
     bool public presaleActive = true; // Start presale immediately
@@ -45,7 +45,7 @@ contract DevilsCoin is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard 
     event PresaleStarted();
     event PresaleEnded();
     
-    constructor() ERC20("Devil's Coin 666", "DVC666") {
+    constructor() ERC20("DVC666 Coin", "DVC666") {
         // Mint initial supply to contract owner for distribution
         _mint(msg.sender, TEAM_RESERVE);
         _mint(address(this), PRESALE_SUPPLY + STAKING_REWARDS + LIQUIDITY_POOL);

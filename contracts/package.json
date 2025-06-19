@@ -1,35 +1,98 @@
 {
-  "name": "devils-coin-contracts",
+  "name": "dvc666-coin-contracts",
   "version": "1.0.0",
-  "description": "Devil's Coin Smart Contracts",
+  "description": "Smart contracts for DVC666 Coin - Multi-chain ERC20 token with presale and staking",
   "main": "index.js",
   "scripts": {
-    "compile": "hardhat compile",
+    "setup": "node setup.js",
     "test": "hardhat test",
-    "deploy:localhost": "hardhat run scripts/deploy.js --network localhost",
-    "deploy:goerli": "hardhat run scripts/deploy.js --network goerli",
-    "deploy:mainnet": "hardhat run scripts/deploy.js --network mainnet",
-    "deploy:devilschain": "hardhat run scripts/deploy.js --network devilschain",
+    "test:coverage": "hardhat coverage",
+    "compile": "hardhat compile",
+    "clean": "hardhat clean",
     "node": "hardhat node",
-    "console": "hardhat console",
-    "flatten": "hardhat flatten",
     "size": "hardhat size-contracts",
-    "coverage": "npx hardhat coverage"
+    "gas-report": "REPORT_GAS=true hardhat test",
+    
+    "deploy": "hardhat run scripts/deploy-multichain.js",
+    "deploy:localhost": "hardhat run scripts/deploy-multichain.js --network localhost",
+    "deploy:mainnet": "hardhat run scripts/deploy-multichain.js --network mainnet",
+    "deploy:bsc": "hardhat run scripts/deploy-multichain.js --network bsc",
+    "deploy:polygon": "hardhat run scripts/deploy-multichain.js --network polygon",
+    "deploy:arbitrum": "hardhat run scripts/deploy-multichain.js --network arbitrum",
+    "deploy:avalanche": "hardhat run scripts/deploy-multichain.js --network avalanche",
+    
+    "deploy:testnet:goerli": "hardhat run scripts/deploy-multichain.js --network goerli",
+    "deploy:testnet:sepolia": "hardhat run scripts/deploy-multichain.js --network sepolia",
+    "deploy:testnet:bsc": "hardhat run scripts/deploy-multichain.js --network bscTestnet",
+    "deploy:testnet:mumbai": "hardhat run scripts/deploy-multichain.js --network mumbai",
+    
+    "verify": "hardhat run scripts/verify-contract.js",
+    "verify:mainnet": "hardhat run scripts/verify-contract.js --network mainnet",
+    "verify:bsc": "hardhat run scripts/verify-contract.js --network bsc",
+    "verify:polygon": "hardhat run scripts/verify-contract.js --network polygon",
+    "verify:all": "hardhat run scripts/verify-contract.js --network mainnet -- --all",
+    
+    "liquidity:add": "hardhat run scripts/add-liquidity.js",
+    "liquidity:uniswap": "ROUTER_TYPE=uniswap hardhat run scripts/add-liquidity.js --network mainnet",
+    "liquidity:pancakeswap": "ROUTER_TYPE=pancakeswap hardhat run scripts/add-liquidity.js --network bsc",
+    "liquidity:quickswap": "ROUTER_TYPE=quickswap hardhat run scripts/add-liquidity.js --network polygon",
+    
+    "price:update": "hardhat run scripts/update-price.js",
+    "price:update:mainnet": "hardhat run scripts/update-price.js --network mainnet",
+    
+    "deploy:full:mainnet": "npm run deploy:mainnet && npm run verify:mainnet && npm run liquidity:uniswap",
+    "deploy:full:bsc": "npm run deploy:bsc && npm run verify:bsc && npm run liquidity:pancakeswap",
+    "deploy:full:polygon": "npm run deploy:polygon && npm run verify:polygon && npm run liquidity:quickswap",
+    
+    "flatten": "hardhat flatten contracts/DevilsCoin.sol > flattened/DVC666_flattened.sol"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "bsc",
+    "polygon",
+    "arbitrum",
+    "avalanche",
+    "defi",
+    "token",
+    "erc20",
+    "dvc666",
+    "presale",
+    "staking",
+    "yield",
+    "dex",
+    "uniswap",
+    "pancakeswap",
+    "multichain"
+  ],
+  "author": "DVC666 Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dvc666/contracts"
+  },
+  "homepage": "https://dvc666.com",
+  "bugs": {
+    "url": "https://github.com/dvc666/contracts/issues"
   },
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
-    "@openzeppelin/contracts": "^4.9.0",
-    "chai": "^4.3.7",
-    "dotenv": "^16.0.0",
-    "ethers": "^5.7.2",
-    "hardhat": "^2.16.0",
-    "hardhat-gas-reporter": "^1.0.9"
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "hardhat": "^2.17.1",
+    "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-contract-sizer": "^2.10.0",
+    "solidity-coverage": "^0.8.4"
   },
   "dependencies": {
-    "@chainlink/contracts": "^0.6.1"
+    "@openzeppelin/contracts": "^4.9.3",
+    "@chainlink/contracts": "^0.6.1",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2"
   },
-  "author": "Devil's Coin Team",
-  "license": "MIT"
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
 }
 

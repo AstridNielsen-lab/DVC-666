@@ -79,7 +79,7 @@ async function main() {
   console.log("Decimals: 18");
   console.log("\n💸 Ready for Presale!");
   console.log("Presale is ACTIVE and ready to accept purchases");
-  console.log("Price: 0.0001 ETH per DVC666 token");
+  console.log("Price: 0.00010382 ETH per DVC666 token");
   
   // Verification instructions
   if (hre.network.name !== "hardhat" && hre.network.name !== "localhost") {

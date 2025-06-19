@@ -3,9 +3,11 @@ import styled, { keyframes } from 'styled-components';
 import { 
   FaChartLine, FaArrowUp, FaArrowDown, FaFire, FaCoins, 
   FaExchangeAlt, FaWallet, FaBolt, FaRocket,
-  FaChartBar, FaBullseye, FaGem
+  FaChartBar, FaBullseye, FaGem, FaTabs
 } from 'react-icons/fa';
 import Logo from '../components/Logo';
+import WalletDashboard from '../components/WalletDashboard';
+import WalletConnector from '../components/WalletConnector';
 
 const Dashboard = () => {
   const [currentPrice, setCurrentPrice] = useState(0.0001);
@@ -27,6 +29,11 @@ const Dashboard = () => {
     support: 0.0000095,
     resistance: 0.000011
   });
+  
+  // Estado para controle de abas
+  const [activeTab, setActiveTab] = useState('trading');
+  const [isWalletConnectorOpen, setIsWalletConnectorOpen] = useState(false);
+  const [connectedWallets, setConnectedWallets] = useState([]);
 
   // Simulate real-time price updates
   useEffect(() => {
@@ -71,6 +78,34 @@ const Dashboard = () => {
     if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
     return num.toLocaleString();
   };
+
+  const handleAddWallet = () => {
+    setIsWalletConnectorOpen(true);
+  };
+
+  const handleWalletConnect = (address, chainId) => {
+    const newWallet = {
+      id: `wallet-${Date.now()}`,
+      address,
+      chainId,
+      type: 'MetaMask', // Detectar tipo real
+      name: `Carteira ${connectedWallets.length + 1}`,
+      connectedAt: new Date().toISOString()
+    };
+    setConnectedWallets(prev => [...prev, newWallet]);
+    setIsWalletConnectorOpen(false);
+  };
+
+  const handleRemoveWallet = (walletId) => {
+    setConnectedWallets(prev => prev.filter(w => w.id !== walletId));
+  };
+
+  const tabs = [
+    { id: 'trading', label: 'Trading', icon: FaChartLine },
+    { id: 'wallets', label: 'Carteiras', icon: FaWallet },
+    { id: 'staking', label: 'Staking', icon: FaCoins },
+    { id: 'analytics', label: 'Analytics', icon: FaChartBar }
+  ];
 
   return (
     <DashboardContainer>
@@ -122,8 +157,29 @@ const Dashboard = () => {
           </StatCard>
         </QuickStats>
       </DashboardHeader>
-      
-      <DashboardGrid>
+
+      {/* Sistema de Abas */}
+      <TabsContainer>
+        <TabsList>
+          {tabs.map(tab => {
+            const IconComponent = tab.icon;
+            return (
+              <TabButton
+                key={tab.id}
+                active={activeTab === tab.id}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <IconComponent />
+                {tab.label}
+              </TabButton>
+            );
+          })}
+        </TabsList>
+      </TabsContainer>
+
+      {/* Conteúdo das Abas */}
+      {activeTab === 'trading' && (
+        <DashboardGrid>
         {/* Main Chart */}
         <ChartSection>
           <SectionHeader>
@@ -292,6 +348,98 @@ const Dashboard = () => {
           </KeyLevels>
         </TradingTools>
       </DashboardGrid>
+      )}
+
+      {/* Aba de Carteiras */}
+      {activeTab === 'wallets' && (
+        <WalletDashboard 
+          connectedWallets={connectedWallets}
+          onAddWallet={handleAddWallet}
+          onRemoveWallet={handleRemoveWallet}
+        />
+      )}
+
+      {/* Aba de Staking */}
+      {activeTab === 'staking' && (
+        <StakingSection>
+          <SectionHeader>
+            <SectionTitle><FaCoins /> Staking DVC666</SectionTitle>
+          </SectionHeader>
+          
+          <StakingGrid>
+            <StakingCard>
+              <StakingTitle>Staking Disponível</StakingTitle>
+              <StakingAPY>6.66% APY</StakingAPY>
+              <StakingDescription>
+                Faça stake dos seus tokens DVC666 e ganhe recompensas passivas.
+                Período mínimo de 30 dias.
+              </StakingDescription>
+              <StakingButton>
+                <FaCoins /> Iniciar Staking
+              </StakingButton>
+            </StakingCard>
+            
+            <StakingCard>
+              <StakingTitle>Seus Stakes</StakingTitle>
+              <StakingStats>
+                <StatRow>
+                  <StakingStatLabel>Total em Stake:</StakingStatLabel>
+                  <StakingStatValue>0 DVC666</StakingStatValue>
+                </StatRow>
+                <StatRow>
+                  <StakingStatLabel>Recompensas Pendentes:</StakingStatLabel>
+                  <StakingStatValue positive>0 DVC666</StakingStatValue>
+                </StatRow>
+                <StatRow>
+                  <StakingStatLabel>Próximo Unlock:</StakingStatLabel>
+                  <StakingStatValue>-</StakingStatValue>
+                </StatRow>
+              </StakingStats>
+              <StakingButton secondary>
+                <FaBolt /> Coletar Recompensas
+              </StakingButton>
+            </StakingCard>
+          </StakingGrid>
+        </StakingSection>
+      )}
+
+      {/* Aba de Analytics */}
+      {activeTab === 'analytics' && (
+        <AnalyticsSection>
+          <SectionHeader>
+            <SectionTitle><FaChartBar /> Analytics Avançados</SectionTitle>
+          </SectionHeader>
+          
+          <AnalyticsGrid>
+            <AnalyticsCard>
+              <AnalyticsTitle>Performance 24h</AnalyticsTitle>
+              <AnalyticsValue positive>+{Math.abs(priceChange24h).toFixed(2)}%</AnalyticsValue>
+            </AnalyticsCard>
+            
+            <AnalyticsCard>
+              <AnalyticsTitle>Volume Total</AnalyticsTitle>
+              <AnalyticsValue>{formatLargeNumber(volume24h)} ETH</AnalyticsValue>
+            </AnalyticsCard>
+            
+            <AnalyticsCard>
+              <AnalyticsTitle>Holders Únicos</AnalyticsTitle>
+              <AnalyticsValue>1,337</AnalyticsValue>
+            </AnalyticsCard>
+            
+            <AnalyticsCard>
+              <AnalyticsTitle>Transações 24h</AnalyticsTitle>
+              <AnalyticsValue>2,456</AnalyticsValue>
+            </AnalyticsCard>
+          </AnalyticsGrid>
+        </AnalyticsSection>
+      )}
+
+      {/* Modal do WalletConnector */}
+      <WalletConnector 
+        isOpen={isWalletConnectorOpen}
+        onClose={() => setIsWalletConnectorOpen(false)}
+        onConnect={handleWalletConnect}
+      />
     </DashboardContainer>
   );
 };
@@ -819,6 +967,201 @@ const LevelValue = styled.span`
   color: ${props => props.positive ? '#00FF88' : '#FF4444'};
 `;
 
+// Sistema de Abas
+const TabsContainer = styled.div`
+  max-width: 1400px;
+  margin: 0 auto 2rem;
+  background: rgba(139, 0, 0, 0.05);
+  border: 1px solid rgba(139, 0, 0, 0.2);
+  border-radius: 15px;
+  padding: 1rem;
+`;
+
+const TabsList = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+`;
+
+const TabButton = styled.button`
+  background: ${props => props.active ? 
+    'linear-gradient(135deg, #8B0000, #FF4500)' : 
+    'transparent'
+  };
+  color: ${props => props.active ? 'white' : props.theme.colors.text.secondary};
+  border: 1px solid ${props => props.active ? '#FF4500' : 'rgba(139, 0, 0, 0.3)'};
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 120px;
+  justify-content: center;
+  
+  &:hover {
+    background: ${props => props.active ? 
+      'linear-gradient(135deg, #8B0000, #FF4500)' : 
+      'rgba(139, 0, 0, 0.1)'
+    };
+    color: white;
+    transform: translateY(-1px);
+  }
+`;
+
+// Seção de Staking
+const StakingSection = styled.div`
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(139, 0, 0, 0.05);
+  border: 1px solid rgba(139, 0, 0, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  animation: ${slideUp} 0.6s ease-out;
+`;
+
+const StakingGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+`;
+
+const StakingCard = styled.div`
+  background: rgba(139, 0, 0, 0.1);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 0, 0, 0.2);
+    border-color: #FF4500;
+  }
+`;
+
+const StakingTitle = styled.h3`
+  color: #FF4500;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+`;
+
+const StakingAPY = styled.div`
+  font-size: 3rem;
+  font-weight: 700;
+  color: #00FF88;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+`;
+
+const StakingDescription = styled.p`
+  color: #ccc;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+`;
+
+const StakingButton = styled.button`
+  background: ${props => props.secondary ? 
+    'rgba(139, 0, 0, 0.1)' : 
+    'linear-gradient(135deg, #8B0000, #FF4500)'
+  };
+  border: ${props => props.secondary ? 
+    '1px solid rgba(139, 0, 0, 0.3)' : 
+    'none'
+  };
+  color: white;
+  border-radius: 10px;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  
+  &:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #8B0000, #FF4500);
+  }
+`;
+
+const StakingStats = styled.div`
+  text-align: left;
+  margin-bottom: 2rem;
+`;
+
+const StatRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+`;
+
+const StakingStatLabel = styled.span`
+  color: #ccc;
+  font-size: 0.9rem;
+`;
+
+const StakingStatValue = styled.span`
+  color: ${props => props.positive ? '#00FF88' : '#fff'};
+  font-weight: 600;
+`;
+
+// Seção de Analytics
+const AnalyticsSection = styled.div`
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(139, 0, 0, 0.05);
+  border: 1px solid rgba(139, 0, 0, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  animation: ${slideUp} 0.6s ease-out;
+`;
+
+const AnalyticsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+`;
+
+const AnalyticsCard = styled.div`
+  background: rgba(139, 0, 0, 0.1);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 0, 0, 0.2);
+    border-color: #FF4500;
+  }
+`;
+
+const AnalyticsTitle = styled.h3`
+  color: #ccc;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const AnalyticsValue = styled.div`
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: ${props => props.positive ? '#00FF88' : '#FF4500'};
+  text-shadow: 0 0 10px ${props => props.positive ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 69, 0, 0.3)'};
+`;
 
 export default Dashboard;
 

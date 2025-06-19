@@ -4,47 +4,51 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaBars, FaTimes, FaWallet } from 'react-icons/fa';
 import Logo from './Logo';
+import WalletConnector from './WalletConnector';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const location = useLocation();
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
+  const [currentNetwork, setCurrentNetwork] = useState(null);
 
   const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/presale', label: 'Presale' },
-    { path: '/staking', label: 'Staking' },
-    { path: '/dashboard', label: 'Dashboard' },
-    { path: '/whitepaper', label: 'Whitepaper' },
-    { path: '/about', label: 'About' }
+    { path: '/', label: 'Home', icon: '🏠' },
+    { path: '/presale', label: 'Presale', icon: '🔥' },
+    { path: '/staking', label: 'Staking', icon: '🥩' },
+    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/whitepaper', label: 'Whitepaper', icon: '📄' },
+    { path: '/about', label: 'About', icon: 'ℹ️' }
   ];
 
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: 'eth_requestAccounts'
-        });
-        if (accounts.length > 0) {
-          setIsConnected(true);
-          setWalletAddress(accounts[0]);
-        }
-      } catch (error) {
-        console.error('Error connecting wallet:', error);
-      }
+  const handleWalletConnect = (address, chainId) => {
+    if (address) {
+      setIsConnected(true);
+      setWalletAddress(address);
+      setCurrentNetwork(chainId);
+      setWalletModalOpen(false);
     } else {
-      alert('Please install MetaMask to connect your wallet!');
+      setIsConnected(false);
+      setWalletAddress('');
+      setCurrentNetwork(null);
     }
   };
 
-  const disconnectWallet = () => {
-    setIsConnected(false);
-    setWalletAddress('');
+  const formatAddress = (address) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  const formatAddress = (address) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const getNetworkName = (chainId) => {
+    const networks = {
+      '0x1': 'Ethereum',
+      '0x38': 'BSC',
+      '0x89': 'Polygon',
+      '0xa4b1': 'Arbitrum'
+    };
+    return networks[chainId] || 'Unknown';
   };
 
   return (
@@ -53,7 +57,7 @@ const Navbar = () => {
         <LogoContainer as={Link} to="/">
           <Logo size="40px" color="#8B0000" />
           <LogoText>
-            Devil's Coin 666
+            DVC666 Coin
             <LogoSubtext>DVC666</LogoSubtext>
           </LogoText>
         </LogoContainer>
@@ -74,14 +78,17 @@ const Navbar = () => {
 
         <NavActions>
           {isConnected ? (
-            <WalletInfo onClick={disconnectWallet}>
+            <WalletInfo onClick={() => setWalletModalOpen(true)}>
               <FaWallet />
-              <span>{formatAddress(walletAddress)}</span>
+              <WalletDetails>
+                <WalletAddress>{formatAddress(walletAddress)}</WalletAddress>
+                <NetworkBadge>{getNetworkName(currentNetwork)}</NetworkBadge>
+              </WalletDetails>
             </WalletInfo>
           ) : (
-            <ConnectButton onClick={connectWallet}>
+            <ConnectButton onClick={() => setWalletModalOpen(true)}>
               <FaWallet />
-              Connect Wallet
+              Conectar Carteira
             </ConnectButton>
           )}
 
@@ -92,6 +99,12 @@ const Navbar = () => {
           </MobileMenuButton>
         </NavActions>
       </NavContent>
+
+      <WalletConnector
+        isOpen={walletModalOpen}
+        onClose={() => setWalletModalOpen(false)}
+        onConnect={handleWalletConnect}
+      />
 
       {isOpen && <Overlay onClick={() => setIsOpen(false)} />}
     </NavContainer>
@@ -266,6 +279,28 @@ const MobileMenuButton = styled.button`
   @media (max-width: 768px) {
     display: block;
   }
+`;
+
+const WalletDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+`;
+
+const WalletAddress = styled.span`
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+`;
+
+const NetworkBadge = styled.span`
+  font-size: 0.7rem;
+  color: ${props => props.theme.colors.secondary};
+  background: rgba(255, 69, 0, 0.1);
+  padding: 0.1rem 0.3rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 69, 0, 0.3);
 `;
 
 const Overlay = styled.div`
