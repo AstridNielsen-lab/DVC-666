@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import Logo from '../components/Logo';
 
 const Home = () => {
-  const [currentPrice, setCurrentPrice] = useState('0.0001');
+  const [currentPrice, setCurrentPrice] = useState('0.00010382');
+  const [priceUSD, setPriceUSD] = useState('0.001');
   const [totalSupply] = useState('66,666,666');
   const [stakingAPY] = useState('6.66');
   const [activeUsers, setActiveUsers] = useState(666);
@@ -14,9 +15,14 @@ const Home = () => {
   useEffect(() => {
     // Simulate price updates
     const interval = setInterval(() => {
-      const basePrice = 0.0001;
-      const fluctuation = (Math.random() - 0.5) * 0.00001;
-      setCurrentPrice((basePrice + fluctuation).toFixed(6));
+      const basePrice = 0.00010382;
+      const fluctuation = (Math.random() - 0.5) * 0.000001;
+      setCurrentPrice((basePrice + fluctuation).toFixed(8));
+      
+      // Simulate USD price based on ETH price (assuming ETH ~$2400)
+      const ethPrice = 2400;
+      const usdPrice = (basePrice + fluctuation) * ethPrice;
+      setPriceUSD(usdPrice.toFixed(4));
     }, 3000);
 
     // Simulate user count updates
@@ -55,7 +61,8 @@ const Home = () => {
             
             <HeroStats>
               <StatItem>
-                <StatValue>${currentPrice}</StatValue>
+                <StatValue>{currentPrice} ETH</StatValue>
+                <StatSubValue>${priceUSD} USD</StatSubValue>
                 <StatLabel>Current Price</StatLabel>
               </StatItem>
               <StatItem>
@@ -292,8 +299,8 @@ const HeroContent = styled.div`
 `;
 
 const HeroTitle = styled.h1`
-  font-size: clamp(3rem, 8vw, 6rem);
-  font-weight: 800;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 700;
   background: linear-gradient(135deg, #8B0000, #FF4500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -320,9 +327,9 @@ const HeroSubtitle = styled.span`
 `;
 
 const HeroDescription = styled.p`
-  font-size: 1.25rem;
-  line-height: 1.6;
-  margin-bottom: 3rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
   color: ${props => props.theme.colors.text.secondary};
   max-width: 600px;
   margin-left: auto;
@@ -341,14 +348,21 @@ const StatItem = styled.div`
 `;
 
 const StatValue = styled.div`
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: ${props => props.theme.colors.primary};
+  margin-bottom: 0.2rem;
+`;
+
+const StatSubValue = styled.div`
+  font-size: 1rem;
+  font-weight: 500;
+  color: ${props => props.theme.colors.secondary};
   margin-bottom: 0.5rem;
 `;
 
 const StatLabel = styled.div`
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: ${props => props.theme.colors.text.tertiary};
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -411,10 +425,10 @@ const FeaturesSection = styled.section`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 3rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 600;
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   color: ${props => props.theme.colors.primary};
   display: flex;
   align-items: center;
@@ -596,17 +610,17 @@ const CTAContent = styled.div`
 `;
 
 const CTATitle = styled.h2`
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 1.8rem;
+  font-weight: 600;
   margin-bottom: 1rem;
   color: ${props => props.theme.colors.primary};
 `;
 
 const CTADescription = styled.p`
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-bottom: 2rem;
   color: ${props => props.theme.colors.text.secondary};
-  line-height: 1.6;
+  line-height: 1.5;
 `;
 
 const CTAButtons = styled.div`
