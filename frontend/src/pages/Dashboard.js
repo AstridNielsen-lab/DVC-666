@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   FaChartLine, FaArrowUp, FaArrowDown, FaFire, FaCoins, 
   FaExchangeAlt, FaWallet, FaBolt, FaRocket,
   FaChartBar, FaBullseye, FaGem, FaTabs, FaEye,
   FaCog, FaBell, FaSearch, FaPlus, FaMinus, FaUsers,
-  FaHistory, FaLayerGroup, FaHome, FaChartPie, FaCircle
+  FaHistory, FaLayerGroup, FaHome, FaChartPie, FaCircle,
+  FaBars, FaTimes, FaInfoCircle, FaFileAlt
 } from 'react-icons/fa';
 import Logo from '../components/Logo';
 import WalletDashboard from '../components/WalletDashboard';
 import WalletConnector from '../components/WalletConnector';
 
 const Dashboard = () => {
+  const location = useLocation();
   const [currentPrice, setCurrentPrice] = useState(0.0001);
   const [priceChange24h, setPriceChange24h] = useState(0);
   const [volume24h, setVolume24h] = useState(156789);
@@ -32,10 +35,23 @@ const Dashboard = () => {
     resistance: 0.000011
   });
   
-  // Estado para controle de abas
+  // Estado para controle de abas e sidebar
   const [activeTab, setActiveTab] = useState('trading');
   const [isWalletConnectorOpen, setIsWalletConnectorOpen] = useState(false);
   const [connectedWallets, setConnectedWallets] = useState([]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Navigation items - same as navbar
+  const navItems = [
+    { path: '/', label: 'Home', icon: FaHome, emoji: '🏠' },
+    { path: '/presale', label: 'Presale', icon: FaFire, emoji: '🔥' },
+    { path: '/staking', label: 'Staking', icon: FaCoins, emoji: '🥩' },
+    { path: '/dashboard', label: 'Dashboard', icon: FaChartLine, emoji: '📊' },
+    { path: '/wallet', label: 'Carteiras', icon: FaWallet, emoji: '💼' },
+    { path: '/evolution', label: 'Evolução', icon: FaChartLine, emoji: '📈' },
+    { path: '/whitepaper', label: 'Whitepaper', icon: FaFileAlt, emoji: '📄' },
+    { path: '/about', label: 'About', icon: FaInfoCircle, emoji: 'ℹ️' }
+  ];
 
   // Simulate real-time price updates
   useEffect(() => {
@@ -112,45 +128,52 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       {/* Modern Sidebar */}
-      <Sidebar>
+      <Sidebar collapsed={sidebarCollapsed}>
         <SidebarHeader>
-          <Logo size="40px" color="#8B0000" />
-          <SidebarTitle>DVC666</SidebarTitle>
+          <SidebarToggle onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+            {sidebarCollapsed ? <FaBars /> : <FaTimes />}
+          </SidebarToggle>
+          {!sidebarCollapsed && (
+            <>
+              <Logo size="40px" color="#8B0000" />
+              <SidebarTitle>DVC666</SidebarTitle>
+            </>
+          )}
         </SidebarHeader>
         
         <SidebarNav>
-          <NavItem active>
-            <FaHome /> Dashboard
-          </NavItem>
-          <NavItem>
-            <FaChartLine /> Trading
-          </NavItem>
-          <NavItem>
-            <FaCoins /> Staking
-          </NavItem>
-          <NavItem>
-            <FaChartPie /> Portfolio
-          </NavItem>
-          <NavItem>
-            <FaHistory /> History
-          </NavItem>
-          <NavItem>
-            <FaUsers /> Community
-          </NavItem>
+          {navItems.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <NavItem 
+                key={item.path}
+                as={Link}
+                to={item.path}
+                active={location.pathname === item.path}
+                collapsed={sidebarCollapsed}
+                title={sidebarCollapsed ? item.label : ''}
+              >
+                <IconComponent />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </NavItem>
+            );
+          })}
         </SidebarNav>
         
         <SidebarFooter>
-          <NavItem>
-            <FaCog /> Settings
+          <NavItem collapsed={sidebarCollapsed} title={sidebarCollapsed ? 'Settings' : ''}>
+            <FaCog />
+            {!sidebarCollapsed && <span>Settings</span>}
           </NavItem>
-          <StatusIndicator>
-            <FaCircle /> Online
+          <StatusIndicator collapsed={sidebarCollapsed}>
+            <FaCircle />
+            {!sidebarCollapsed && <span>Online</span>}
           </StatusIndicator>
         </SidebarFooter>
       </Sidebar>
       
       {/* Main Content */}
-      <MainContent>
+      <MainContent sidebarCollapsed={sidebarCollapsed}>
         <DashboardContainer>
           <DashboardHeader>
         <HeaderTop>
@@ -1293,7 +1316,7 @@ const DashboardLayout = styled.div`
 `;
 
 const Sidebar = styled.div`
-  width: 280px;
+  width: ${props => props.collapsed ? '80px' : '280px'};
   background: linear-gradient(180deg, 
     rgba(15, 15, 15, 0.95) 0%,
     rgba(25, 25, 25, 0.9) 100%
@@ -1304,9 +1327,12 @@ const Sidebar = styled.div`
   position: fixed;
   height: 100vh;
   z-index: 100;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
   
   @media (max-width: 768px) {
-    display: none;
+    width: ${props => props.collapsed ? '0px' : '280px'};
+    transform: translateX(${props => props.collapsed ? '-100%' : '0'});
   }
 `;
 
@@ -1334,8 +1360,8 @@ const SidebarNav = styled.nav`
 const NavItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
+  gap: ${props => props.collapsed ? '0' : '1rem'};
+  padding: ${props => props.collapsed ? '1rem' : '1rem 2rem'};
   color: ${props => props.active ? '#fff' : '#ccc'};
   background: ${props => props.active ? 
     'linear-gradient(90deg, rgba(139, 0, 0, 0.3), rgba(255, 69, 0, 0.1))' : 
@@ -1345,6 +1371,9 @@ const NavItem = styled.div`
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
+  text-decoration: none;
+  justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
+  position: relative;
   
   &:hover {
     background: linear-gradient(90deg, rgba(139, 0, 0, 0.2), rgba(255, 69, 0, 0.05));
@@ -1354,7 +1383,34 @@ const NavItem = styled.div`
   
   svg {
     font-size: 1.1rem;
+    min-width: 1.1rem;
   }
+  
+  span {
+    opacity: ${props => props.collapsed ? '0' : '1'};
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  /* Tooltip for collapsed mode */
+  ${props => props.collapsed && props.title && `
+    &:hover::after {
+      content: '${props.title}';
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      z-index: 1000;
+      margin-left: 1rem;
+      border: 1px solid rgba(139, 0, 0, 0.3);
+    }
+  `}
 `;
 
 const SidebarFooter = styled.div`
@@ -1365,21 +1421,51 @@ const SidebarFooter = styled.div`
 const StatusIndicator = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
+  gap: ${props => props.collapsed ? '0' : '0.5rem'};
+  padding: ${props => props.collapsed ? '1rem' : '1rem 2rem'};
   color: #00FF88;
   font-size: 0.9rem;
   font-weight: 500;
+  justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
   
   svg {
     font-size: 0.8rem;
     animation: ${pulse} 2s ease-in-out infinite;
+    min-width: 0.8rem;
+  }
+  
+  span {
+    opacity: ${props => props.collapsed ? '0' : '1'};
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+  }
+`;
+
+const SidebarToggle = styled.button`
+  background: rgba(139, 0, 0, 0.1);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  color: #FF4500;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  
+  &:hover {
+    background: rgba(139, 0, 0, 0.2);
+    border-color: #FF4500;
+    transform: scale(1.05);
   }
 `;
 
 const MainContent = styled.div`
   flex: 1;
-  margin-left: 280px;
+  margin-left: ${props => props.sidebarCollapsed ? '80px' : '280px'};
+  transition: margin-left 0.3s ease;
   
   @media (max-width: 768px) {
     margin-left: 0;
