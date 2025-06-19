@@ -42,7 +42,10 @@
     "docker-up": "docker-compose up -d",
     "docker-down": "docker-compose down",
     "backup": "node scripts/backup.js",
-    "restore": "node scripts/restore.js"
+    "restore": "node scripts/restore.js",
+    "deploy": "npm run build-frontend && cd frontend && vercel --prod",
+    "deploy-preview": "npm run build-frontend && cd frontend && vercel",
+    "deploy-frontend": "npm run build-frontend && cd frontend && vercel --prod"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",

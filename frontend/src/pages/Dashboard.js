@@ -3,7 +3,9 @@ import styled, { keyframes } from 'styled-components';
 import { 
   FaChartLine, FaArrowUp, FaArrowDown, FaFire, FaCoins, 
   FaExchangeAlt, FaWallet, FaBolt, FaRocket,
-  FaChartBar, FaBullseye, FaGem, FaTabs
+  FaChartBar, FaBullseye, FaGem, FaTabs, FaEye,
+  FaCog, FaBell, FaSearch, FaPlus, FaMinus, FaUsers,
+  FaHistory, FaLayerGroup, FaHome, FaChartPie, FaCircle
 } from 'react-icons/fa';
 import Logo from '../components/Logo';
 import WalletDashboard from '../components/WalletDashboard';
@@ -74,6 +76,7 @@ const Dashboard = () => {
 
   const formatPrice = (price) => price.toFixed(8);
   const formatLargeNumber = (num) => {
+    if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
     if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
     return num.toLocaleString();
@@ -107,8 +110,49 @@ const Dashboard = () => {
   ];
 
   return (
-    <DashboardContainer>
-      <DashboardHeader>
+    <DashboardLayout>
+      {/* Modern Sidebar */}
+      <Sidebar>
+        <SidebarHeader>
+          <Logo size="40px" color="#8B0000" />
+          <SidebarTitle>DVC666</SidebarTitle>
+        </SidebarHeader>
+        
+        <SidebarNav>
+          <NavItem active>
+            <FaHome /> Dashboard
+          </NavItem>
+          <NavItem>
+            <FaChartLine /> Trading
+          </NavItem>
+          <NavItem>
+            <FaCoins /> Staking
+          </NavItem>
+          <NavItem>
+            <FaChartPie /> Portfolio
+          </NavItem>
+          <NavItem>
+            <FaHistory /> History
+          </NavItem>
+          <NavItem>
+            <FaUsers /> Community
+          </NavItem>
+        </SidebarNav>
+        
+        <SidebarFooter>
+          <NavItem>
+            <FaCog /> Settings
+          </NavItem>
+          <StatusIndicator>
+            <FaCircle /> Online
+          </StatusIndicator>
+        </SidebarFooter>
+      </Sidebar>
+      
+      {/* Main Content */}
+      <MainContent>
+        <DashboardContainer>
+          <DashboardHeader>
         <HeaderTop>
           <LogoSection>
             <Logo size="50px" color="#8B0000" />
@@ -181,43 +225,124 @@ const Dashboard = () => {
         <DashboardGrid>
         {/* Main Chart */}
         <ChartSection>
-          <SectionHeader>
-            <SectionTitle><FaChartLine /> DVC666 Price Chart</SectionTitle>
-            <ChartControls>
-              <TimeButton active>1H</TimeButton>
-              <TimeButton>4H</TimeButton>
-              <TimeButton>1D</TimeButton>
-              <TimeButton>1W</TimeButton>
-            </ChartControls>
-          </SectionHeader>
-          
-          <ChartContainer>
-            <PriceChart>
-              {priceHistory.map((point, index) => (
-                <ChartPoint 
-                  key={index}
-                  style={{
-                    left: `${(index / 99) * 100}%`,
-                    bottom: `${((point.price - 0.000095) / 0.000015) * 100}%`
-                  }}
-                />
-              ))}
-              <SupportLine level={20} />
-              <ResistanceLine level={80} />
-            </PriceChart>
+          <ChartHeader>
+            <ChartTitleSection>
+              <SectionTitle><FaChartLine /> Gráfico de DVC666 para BRL</SectionTitle>
+              <ChartPriceDisplay>
+                <CurrentChartPrice>R$ {(currentPrice * 100000).toFixed(2)}</CurrentChartPrice>
+                <ChartPriceChange positive={priceChange24h >= 0}>
+                  {priceChange24h >= 0 ? <FaArrowUp /> : <FaArrowDown />}
+                  {Math.abs(priceChange24h).toFixed(2)}% (24h)
+                </ChartPriceChange>
+              </ChartPriceDisplay>
+            </ChartTitleSection>
             
-            <VolumeChart>
+            <ChartControls>
+              <TimeframeButtons>
+                <TimeButton active>1D</TimeButton>
+                <TimeButton>7D</TimeButton>
+                <TimeButton>1M</TimeButton>
+                <TimeButton>3M</TimeButton>
+                <TimeButton>1A</TimeButton>
+                <TimeButton>Tudo</TimeButton>
+              </TimeframeButtons>
+              
+              <ChartTypeButtons>
+                <ChartTypeButton active>Preço</ChartTypeButton>
+                <ChartTypeButton>Capitalização de Mercado</ChartTypeButton>
+                <ChartTypeButton>Volume</ChartTypeButton>
+              </ChartTypeButtons>
+            </ChartControls>
+          </ChartHeader>
+          
+          <ModernChartContainer>
+            <ChartLoadingIndicator>
+              <FaChartLine />
+              <span>Carregando Dados</span>
+              <LoadingSubtext>Aguarde, estamos carregando os dados do gráfico</LoadingSubtext>
+            </ChartLoadingIndicator>
+            
+            <PriceChartArea>
+              <ChartYAxis>
+                <YAxisLabel>R$ {(currentPrice * 100000 * 1.1).toFixed(2)}</YAxisLabel>
+                <YAxisLabel>R$ {(currentPrice * 100000 * 1.05).toFixed(2)}</YAxisLabel>
+                <YAxisLabel>R$ {(currentPrice * 100000).toFixed(2)}</YAxisLabel>
+                <YAxisLabel>R$ {(currentPrice * 100000 * 0.95).toFixed(2)}</YAxisLabel>
+                <YAxisLabel>R$ {(currentPrice * 100000 * 0.9).toFixed(2)}</YAxisLabel>
+              </ChartYAxis>
+              
+              <ChartGrid>
+                <GridLineHorizontal style={{top: '0%'}} />
+                <GridLineHorizontal style={{top: '25%'}} />
+                <GridLineHorizontal style={{top: '50%'}} />
+                <GridLineHorizontal style={{top: '75%'}} />
+                <GridLineHorizontal style={{top: '100%'}} />
+                
+                <GridLineVertical style={{left: '0%'}} />
+                <GridLineVertical style={{left: '20%'}} />
+                <GridLineVertical style={{left: '40%'}} />
+                <GridLineVertical style={{left: '60%'}} />
+                <GridLineVertical style={{left: '80%'}} />
+                <GridLineVertical style={{left: '100%'}} />
+              </ChartGrid>
+              
+              <PriceLineChart>
+                <ChartGradientArea />
+                {priceHistory.map((point, index) => (
+                  <ChartDataPoint 
+                    key={index}
+                    style={{
+                      left: `${(index / 99) * 100}%`,
+                      bottom: `${((point.price - 0.000095) / 0.000015) * 100}%`
+                    }}
+                  />
+                ))}
+                <ChartHoverLine />
+              </PriceLineChart>
+            </PriceChartArea>
+            
+            <VolumeChartArea>
+              <VolumeTitle>Volume</VolumeTitle>
+              <VolumeDisplay>R$ {formatLargeNumber(volume24h * currentPrice * 100000)}</VolumeDisplay>
               {priceHistory.map((point, index) => (
-                <VolumeBar 
+                <VolumeBarModern 
                   key={index}
+                  positive={index === 0 || point.price >= priceHistory[index-1]?.price}
                   style={{
                     left: `${(index / 99) * 100}%`,
                     height: `${(point.volume / 15000) * 100}%`
                   }}
                 />
               ))}
-            </VolumeChart>
-          </ChartContainer>
+            </VolumeChartArea>
+            
+            <ChartXAxis>
+              <XAxisLabel>Há 24h</XAxisLabel>
+              <XAxisLabel>Há 18h</XAxisLabel>
+              <XAxisLabel>Há 12h</XAxisLabel>
+              <XAxisLabel>Há 6h</XAxisLabel>
+              <XAxisLabel>Agora</XAxisLabel>
+            </ChartXAxis>
+          </ModernChartContainer>
+          
+          <ChartStats>
+            <StatPair>
+              <ChartStatLabel>Baixa (24h)</ChartStatLabel>
+              <ChartStatValue>R$ {(currentPrice * 100000 * 0.95).toFixed(2)}</ChartStatValue>
+            </StatPair>
+            <StatPair>
+              <ChartStatLabel>Alta (24h)</ChartStatLabel>
+              <ChartStatValue>R$ {(currentPrice * 100000 * 1.05).toFixed(2)}</ChartStatValue>
+            </StatPair>
+            <StatPair>
+              <ChartStatLabel>Máxima de todos os tempos</ChartStatLabel>
+              <ChartStatValue>R$ {(currentPrice * 100000 * 1.2).toFixed(2)}</ChartStatValue>
+            </StatPair>
+            <StatPair>
+              <ChartStatLabel>Mínimo de todos os tempos</ChartStatLabel>
+              <ChartStatValue>R$ {(currentPrice * 100000 * 0.1).toFixed(2)}</ChartStatValue>
+            </StatPair>
+          </ChartStats>
         </ChartSection>
         
         {/* Technical Analysis */}
@@ -431,7 +556,9 @@ const Dashboard = () => {
         onClose={() => setIsWalletConnectorOpen(false)}
         onConnect={handleWalletConnect}
       />
-    </DashboardContainer>
+        </DashboardContainer>
+      </MainContent>
+    </DashboardLayout>
   );
 };
 
@@ -1152,6 +1279,431 @@ const AnalyticsValue = styled.div`
   font-weight: 700;
   color: ${props => props.positive ? '#00FF88' : '#FF4500'};
   text-shadow: 0 0 10px ${props => props.positive ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 69, 0, 0.3)'};
+`;
+
+// Modern Sidebar Layout Components
+const DashboardLayout = styled.div`
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, 
+    rgba(10, 10, 10, 0.95) 0%, 
+    rgba(26, 26, 26, 0.95) 50%,
+    rgba(42, 42, 42, 0.95) 100%
+  );
+`;
+
+const Sidebar = styled.div`
+  width: 280px;
+  background: linear-gradient(180deg, 
+    rgba(15, 15, 15, 0.95) 0%,
+    rgba(25, 25, 25, 0.9) 100%
+  );
+  border-right: 1px solid rgba(139, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  z-index: 100;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const SidebarHeader = styled.div`
+  padding: 2rem;
+  border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const SidebarTitle = styled.h1`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FF4500;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+`;
+
+const SidebarNav = styled.nav`
+  flex: 1;
+  padding: 1rem 0;
+`;
+
+const NavItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  color: ${props => props.active ? '#fff' : '#ccc'};
+  background: ${props => props.active ? 
+    'linear-gradient(90deg, rgba(139, 0, 0, 0.3), rgba(255, 69, 0, 0.1))' : 
+    'transparent'
+  };
+  border-right: ${props => props.active ? '3px solid #FF4500' : '3px solid transparent'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  
+  &:hover {
+    background: linear-gradient(90deg, rgba(139, 0, 0, 0.2), rgba(255, 69, 0, 0.05));
+    color: #fff;
+    border-right-color: #FF4500;
+  }
+  
+  svg {
+    font-size: 1.1rem;
+  }
+`;
+
+const SidebarFooter = styled.div`
+  padding: 1rem 0;
+  border-top: 1px solid rgba(139, 0, 0, 0.1);
+`;
+
+const StatusIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  color: #00FF88;
+  font-size: 0.9rem;
+  font-weight: 500;
+  
+  svg {
+    font-size: 0.8rem;
+    animation: ${pulse} 2s ease-in-out infinite;
+  }
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  margin-left: 280px;
+  
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
+`;
+
+// Modern Chart Components (CoinMarketCap Style)
+const ChartHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+`;
+
+const ChartTitleSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ChartPriceDisplay = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const CurrentChartPrice = styled.div`
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+`;
+
+const ChartPriceChange = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: ${props => props.positive ? '#00FF88' : '#FF4444'};
+  background: ${props => props.positive ? 
+    'rgba(0, 255, 136, 0.1)' : 
+    'rgba(255, 68, 68, 0.1)'
+  };
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid ${props => props.positive ? 
+    'rgba(0, 255, 136, 0.2)' : 
+    'rgba(255, 68, 68, 0.2)'
+  };
+`;
+
+const TimeframeButtons = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+`;
+
+const ChartTypeButtons = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    margin-top: 1rem;
+  }
+`;
+
+const ChartTypeButton = styled.button`
+  background: ${props => props.active ? 
+    'rgba(139, 0, 0, 0.2)' : 
+    'transparent'
+  };
+  color: ${props => props.active ? '#FF4500' : '#ccc'};
+  border: 1px solid ${props => props.active ? '#FF4500' : 'rgba(139, 0, 0, 0.3)'};
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background: rgba(139, 0, 0, 0.2);
+    color: #FF4500;
+    border-color: #FF4500;
+  }
+`;
+
+const ModernChartContainer = styled.div`
+  height: 500px;
+  position: relative;
+  background: linear-gradient(180deg, 
+    rgba(15, 15, 15, 0.8) 0%,
+    rgba(25, 25, 25, 0.6) 100%
+  );
+  border: 1px solid rgba(139, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+`;
+
+const ChartLoadingIndicator = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #ccc;
+  z-index: 2;
+  
+  svg {
+    font-size: 3rem;
+    color: #FF4500;
+    animation: ${pulse} 2s ease-in-out infinite;
+  }
+  
+  span {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+`;
+
+const LoadingSubtext = styled.div`
+  font-size: 0.9rem;
+  color: #888;
+  text-align: center;
+`;
+
+const PriceChartArea = styled.div`
+  height: 70%;
+  position: relative;
+  padding: 1rem;
+`;
+
+const ChartYAxis = styled.div`
+  position: absolute;
+  left: 0;
+  top: 1rem;
+  bottom: 1rem;
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 3;
+`;
+
+const YAxisLabel = styled.div`
+  font-size: 0.8rem;
+  color: #888;
+  background: rgba(25, 25, 25, 0.8);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(139, 0, 0, 0.1);
+  width: fit-content;
+`;
+
+const ChartGrid = styled.div`
+  position: absolute;
+  top: 1rem;
+  left: 100px;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1;
+`;
+
+const GridLineHorizontal = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(139, 0, 0, 0.1);
+`;
+
+const GridLineVertical = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(139, 0, 0, 0.1);
+`;
+
+const PriceLineChart = styled.div`
+  position: absolute;
+  top: 1rem;
+  left: 100px;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+`;
+
+const ChartGradientArea = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, 
+    rgba(255, 69, 0, 0.1) 0%,
+    rgba(139, 0, 0, 0.05) 50%,
+    transparent 100%
+  );
+  border-radius: 8px;
+`;
+
+const ChartDataPoint = styled.div`
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #FF4500;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 69, 0, 0.6);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.5);
+    box-shadow: 0 0 12px rgba(255, 69, 0, 0.8);
+  }
+`;
+
+const ChartHoverLine = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 69, 0, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+`;
+
+const VolumeChartArea = styled.div`
+  height: 25%;
+  position: relative;
+  padding: 1rem;
+  border-top: 1px solid rgba(139, 0, 0, 0.2);
+`;
+
+const VolumeTitle = styled.div`
+  position: absolute;
+  top: 0.5rem;
+  left: 1rem;
+  font-size: 0.9rem;
+  color: #ccc;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const VolumeDisplay = styled.div`
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  font-size: 0.9rem;
+  color: #FF4500;
+  font-weight: 600;
+`;
+
+const VolumeBarModern = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  background: ${props => props.positive ? 
+    'linear-gradient(180deg, #00FF88, rgba(0, 255, 136, 0.3))' : 
+    'linear-gradient(180deg, #FF4444, rgba(255, 68, 68, 0.3))'
+  };
+  border-radius: 1px 1px 0 0;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: ${props => props.positive ? '#00FF88' : '#FF4444'};
+    transform: scaleX(1.5);
+  }
+`;
+
+const ChartXAxis = styled.div`
+  height: 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem 0 100px;
+  border-top: 1px solid rgba(139, 0, 0, 0.1);
+`;
+
+const XAxisLabel = styled.div`
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 500;
+`;
+
+const ChartStats = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(139, 0, 0, 0.05);
+  border: 1px solid rgba(139, 0, 0, 0.1);
+  border-radius: 12px;
+`;
+
+const StatPair = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const ChartStatLabel = styled.div`
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const ChartStatValue = styled.div`
+  font-size: 1.1rem;
+  color: #fff;
+  font-weight: 600;
 `;
 
 export default Dashboard;
