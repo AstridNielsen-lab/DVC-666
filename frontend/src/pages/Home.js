@@ -6,11 +6,12 @@ import { Link } from 'react-router-dom';
 import Logo from '../components/Logo';
 
 const Home = () => {
-  const [currentPrice, setCurrentPrice] = useState('0.00010382');
-  const [priceUSD, setPriceUSD] = useState('0.001');
-  const [totalSupply] = useState('66,666,666');
-  const [stakingAPY] = useState('6.66');
-  const [activeUsers, setActiveUsers] = useState(666);
+  const [currentPrice, setCurrentPrice] = useState('0.00008250');
+  const [priceUSD, setPriceUSD] = useState('0.198');
+  const [totalSupply] = useState('100,000,000');
+  const [soldTokens, setSoldTokens] = useState(1234567);
+  const [stakingAPY] = useState('12.5');
+  const [activeUsers, setActiveUsers] = useState(2847);
 
   useEffect(() => {
     // Simulate price updates
@@ -30,9 +31,20 @@ const Home = () => {
       setActiveUsers(prev => prev + Math.floor(Math.random() * 5));
     }, 5000);
 
+    // Simulate token sales (increase sold tokens gradually)
+    const salesInterval = setInterval(() => {
+      setSoldTokens(prev => {
+        const increment = Math.floor(Math.random() * 100) + 50; // 50-150 tokens per update
+        const newValue = prev + increment;
+        // Don't exceed a reasonable amount (goal: reach 2M+ sold)
+        return newValue < 2500000 ? newValue : prev;
+      });
+    }, 8000); // Update every 8 seconds
+
     return () => {
       clearInterval(interval);
       clearInterval(userInterval);
+      clearInterval(salesInterval);
     };
   }, []);
 
@@ -105,7 +117,7 @@ const Home = () => {
             <FeatureIcon><FaShieldAlt /></FeatureIcon>
             <FeatureTitle>Proof of Stake</FeatureTitle>
             <FeatureDescription>
-              Custom PoS blockchain with 13-second block times for lightning-fast transactions 
+              Custom PoS blockchain with 12-second block times for lightning-fast transactions 
               and minimal energy consumption.
             </FeatureDescription>
           </FeatureCard>
@@ -118,7 +130,7 @@ const Home = () => {
             <FeatureIcon><FaCoins /></FeatureIcon>
             <FeatureTitle>Devilish Staking</FeatureTitle>
             <FeatureDescription>
-              Lock your tokens for 30 days and earn 6.66% APY. The longer you hold, 
+              Lock your tokens for 30 days and earn {stakingAPY}% APY. The longer you hold, 
               the more hellish your rewards become.
             </FeatureDescription>
           </FeatureCard>
@@ -170,11 +182,15 @@ const Home = () => {
             <MetricsList>
               <MetricItem>
                 <MetricLabel>Total Supply:</MetricLabel>
-                <MetricValue>66,666,666 DVC</MetricValue>
+                <MetricValue>100,000,000 DVC</MetricValue>
+              </MetricItem>
+              <MetricItem>
+                <MetricLabel>Tokens Sold:</MetricLabel>
+                <MetricValue>{soldTokens.toLocaleString()} DVC</MetricValue>
               </MetricItem>
               <MetricItem>
                 <MetricLabel>Block Time:</MetricLabel>
-                <MetricValue>13 seconds</MetricValue>
+                <MetricValue>12 seconds</MetricValue>
               </MetricItem>
               <MetricItem>
                 <MetricLabel>Consensus:</MetricLabel>
@@ -182,7 +198,7 @@ const Home = () => {
               </MetricItem>
               <MetricItem>
                 <MetricLabel>Staking Reward:</MetricLabel>
-                <MetricValue>6.66% APY</MetricValue>
+                <MetricValue>{stakingAPY}% APY</MetricValue>
               </MetricItem>
               <MetricItem>
                 <MetricLabel>Lock Period:</MetricLabel>
