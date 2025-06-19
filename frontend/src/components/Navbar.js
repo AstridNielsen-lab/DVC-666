@@ -2,54 +2,24 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaBars, FaTimes, FaWallet } from 'react-icons/fa';
+import { FaBars, FaTimes } from 'react-icons/fa';
 import Logo from './Logo';
-import WalletConnector from './WalletConnector';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const location = useLocation();
-  const [isConnected, setIsConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
-  const [currentNetwork, setCurrentNetwork] = useState(null);
 
   const navItems = [
     { path: '/', label: 'Home', icon: '🏠' },
     { path: '/presale', label: 'Presale', icon: '🔥' },
     { path: '/staking', label: 'Staking', icon: '🥩' },
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/wallet', label: 'Carteiras', icon: '💼' },
+    { path: '/evolution', label: 'Evolução', icon: '📈' },
     { path: '/whitepaper', label: 'Whitepaper', icon: '📄' },
     { path: '/about', label: 'About', icon: 'ℹ️' }
   ];
 
-  const handleWalletConnect = (address, chainId) => {
-    if (address) {
-      setIsConnected(true);
-      setWalletAddress(address);
-      setCurrentNetwork(chainId);
-      setWalletModalOpen(false);
-    } else {
-      setIsConnected(false);
-      setWalletAddress('');
-      setCurrentNetwork(null);
-    }
-  };
-
-  const formatAddress = (address) => {
-    if (!address) return '';
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
-  const getNetworkName = (chainId) => {
-    const networks = {
-      '0x1': 'Ethereum',
-      '0x38': 'BSC',
-      '0x89': 'Polygon',
-      '0xa4b1': 'Arbitrum'
-    };
-    return networks[chainId] || 'Unknown';
-  };
 
   return (
     <NavContainer>
@@ -57,8 +27,8 @@ const Navbar = () => {
         <LogoContainer as={Link} to="/">
           <Logo size="40px" color="#8B0000" />
           <LogoText>
-            DVC666 Coin
-            <LogoSubtext>DVC666</LogoSubtext>
+            DVC666
+            <LogoSubtext>Devil's Coin</LogoSubtext>
           </LogoText>
         </LogoContainer>
 
@@ -77,21 +47,6 @@ const Navbar = () => {
         </NavItems>
 
         <NavActions>
-          {isConnected ? (
-            <WalletInfo onClick={() => setWalletModalOpen(true)}>
-              <FaWallet />
-              <WalletDetails>
-                <WalletAddress>{formatAddress(walletAddress)}</WalletAddress>
-                <NetworkBadge>{getNetworkName(currentNetwork)}</NetworkBadge>
-              </WalletDetails>
-            </WalletInfo>
-          ) : (
-            <ConnectButton onClick={() => setWalletModalOpen(true)}>
-              <FaWallet />
-              Conectar Carteira
-            </ConnectButton>
-          )}
-
           <MobileMenuButton
             onClick={() => setIsOpen(!isOpen)}
           >
@@ -99,12 +54,6 @@ const Navbar = () => {
           </MobileMenuButton>
         </NavActions>
       </NavContent>
-
-      <WalletConnector
-        isOpen={walletModalOpen}
-        onClose={() => setWalletModalOpen(false)}
-        onConnect={handleWalletConnect}
-      />
 
       {isOpen && <Overlay onClick={() => setIsOpen(false)} />}
     </NavContainer>
@@ -210,57 +159,6 @@ const NavActions = styled.div`
   gap: 1rem;
 `;
 
-const ConnectButton = styled(motion.button)`
-  background: linear-gradient(135deg, #8B0000, #FF4500);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3);
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-  }
-`;
-
-const WalletInfo = styled(motion.div)`
-  background: rgba(139, 0, 0, 0.1);
-  color: ${props => props.theme.colors.primary};
-  border: 1px solid ${props => props.theme.colors.border.primary};
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-
-  &:hover {
-    background: rgba(139, 0, 0, 0.2);
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-    
-    span {
-      display: none;
-    }
-  }
-`;
 
 const MobileMenuButton = styled.button`
   display: none;
@@ -281,27 +179,6 @@ const MobileMenuButton = styled.button`
   }
 `;
 
-const WalletDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.1rem;
-`;
-
-const WalletAddress = styled.span`
-  font-family: 'Monaco', 'Menlo', monospace;
-  font-size: 0.85rem;
-  font-weight: 600;
-`;
-
-const NetworkBadge = styled.span`
-  font-size: 0.7rem;
-  color: ${props => props.theme.colors.secondary};
-  background: rgba(255, 69, 0, 0.1);
-  padding: 0.1rem 0.3rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 69, 0, 0.3);
-`;
 
 const Overlay = styled.div`
   position: fixed;

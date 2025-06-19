@@ -102,7 +102,6 @@ const Dashboard = () => {
 
   const tabs = [
     { id: 'trading', label: 'Trading', icon: FaChartLine },
-    { id: 'wallets', label: 'Carteiras', icon: FaWallet },
     { id: 'staking', label: 'Staking', icon: FaCoins },
     { id: 'analytics', label: 'Analytics', icon: FaChartBar }
   ];
@@ -350,14 +349,6 @@ const Dashboard = () => {
       </DashboardGrid>
       )}
 
-      {/* Aba de Carteiras */}
-      {activeTab === 'wallets' && (
-        <WalletDashboard 
-          connectedWallets={connectedWallets}
-          onAddWallet={handleAddWallet}
-          onRemoveWallet={handleRemoveWallet}
-        />
-      )}
 
       {/* Aba de Staking */}
       {activeTab === 'staking' && (

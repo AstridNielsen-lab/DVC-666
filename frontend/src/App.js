@@ -16,6 +16,8 @@ import Home from './pages/Home';
 import Presale from './pages/Presale';
 import Staking from './pages/Staking';
 import Dashboard from './pages/Dashboard';
+import Wallet from './pages/Wallet';
+import Evolution from './pages/Evolution';
 import Whitepaper from './pages/Whitepaper';
 import About from './pages/About';
 
@@ -87,6 +89,10 @@ function App() {
                 <Route path="/presale" element={<Presale />} />
                 <Route path="/staking" element={<Staking />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/wallet" element={<Wallet />} />
+                <Route path="/carteira" element={<Wallet />} />
+                <Route path="/evolution" element={<Evolution />} />
+                <Route path="/evolucao" element={<Evolution />} />
                 <Route path="/whitepaper" element={<Whitepaper />} />
                 <Route path="/about" element={<About />} />
               </Routes>

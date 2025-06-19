@@ -49,8 +49,8 @@ const Home = () => {
             <HeroTitle>
               <Logo size="80px" color="#8B0000" />
               <TitleText>
-                Devil's Coin
-                <HeroSubtitle>DVC</HeroSubtitle>
+                DVC666
+                <HeroSubtitle>Devil's Coin</HeroSubtitle>
               </TitleText>
             </HeroTitle>
             
@@ -274,6 +274,8 @@ const HeroSection = styled.section`
   justify-content: center;
   position: relative;
   overflow: hidden;
+  padding-top: 150px; /* Ainda mais espaço do menu */
+  padding-bottom: 50px;
 `;
 
 const HeroBackground = styled.div`
@@ -294,8 +296,13 @@ const HeroBackground = styled.div`
 const HeroContent = styled.div`
   text-align: center;
   max-width: 800px;
-  padding: 2rem;
+  padding: 3rem 2rem;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem; /* Abaixa o conteúdo */
 `;
 
 const HeroTitle = styled.h1`
@@ -316,6 +323,8 @@ const TitleText = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  justify-content: center;
 `;
 
 
@@ -450,6 +459,10 @@ const FeatureCard = styled(motion.div)`
   padding: 2rem;
   text-align: center;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
     transform: translateY(-5px);
@@ -473,6 +486,9 @@ const FeatureTitle = styled.h3`
 const FeatureDescription = styled.p`
   color: ${props => props.theme.colors.text.secondary};
   line-height: 1.6;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 100%;
 `;
 
 const TokenomicsSection = styled.section`
