@@ -141,13 +141,11 @@ const SUPPORTED_WALLETS = {
     description: 'Conecte 300+ carteiras móveis via QR Code',
     downloadUrl: 'https://walletconnect.com/',
     type: 'walletconnect',
-    popular: true,
+    popular: false,
     detector: () => true,
     connector: async () => {
-      // Implementação básica do WalletConnect
-      const modalUrl = 'https://walletconnect.com/registry';
-      window.open(modalUrl, '_blank');
-      throw new Error('WalletConnect: Escaneie o QR Code no seu celular');
+      // Implementação básica do WalletConnect - será implementada futuramente
+      throw new Error('WalletConnect: Funcionalidade em desenvolvimento');
     }
   },
 
@@ -162,8 +160,6 @@ const SUPPORTED_WALLETS = {
     detector: () => false,
     connector: async () => {
       // Implementação futura da API do Mercado Pago
-      const authUrl = 'https://auth.mercadopago.com.br/authorization';
-      window.open(authUrl, '_blank');
       throw new Error('Integração Mercado Pago em desenvolvimento');
     }
   },
@@ -177,8 +173,7 @@ const SUPPORTED_WALLETS = {
     country: 'BR',
     detector: () => false,
     connector: async () => {
-      const authUrl = 'https://www.bitpreco.com/api/auth';
-      window.open(authUrl, '_blank');
+      // Integração futura - sem abrir nova janela
       throw new Error('Integração BitPreço em desenvolvimento');
     }
   },
@@ -192,8 +187,7 @@ const SUPPORTED_WALLETS = {
     country: 'BR',
     detector: () => false,
     connector: async () => {
-      const authUrl = 'https://foxbit.com.br/api/auth';
-      window.open(authUrl, '_blank');
+      // Integração futura - sem abrir nova janela
       throw new Error('Integração Foxbit em desenvolvimento');
     }
   },
@@ -207,8 +201,7 @@ const SUPPORTED_WALLETS = {
     country: 'BR',
     detector: () => false,
     connector: async () => {
-      const authUrl = 'https://www.novadax.com.br/api/auth';
-      window.open(authUrl, '_blank');
+      // Integração futura - sem abrir nova janela
       throw new Error('Integração NovaDAX em desenvolvimento');
     }
   },
@@ -223,8 +216,7 @@ const SUPPORTED_WALLETS = {
     popular: true,
     detector: () => false,
     connector: async () => {
-      const authUrl = 'https://accounts.binance.com/oauth/authorize';
-      window.open(authUrl, '_blank');
+      // Integração futura - sem abrir nova janela
       throw new Error('Integração Binance Exchange em desenvolvimento');
     }
   },
@@ -237,8 +229,7 @@ const SUPPORTED_WALLETS = {
     type: 'exchange',
     detector: () => false,
     connector: async () => {
-      const authUrl = 'https://www.kucoin.com/oauth/authorize';
-      window.open(authUrl, '_blank');
+      // Integração futura - sem abrir nova janela
       throw new Error('Integração KuCoin em desenvolvimento');
     }
   },
@@ -251,8 +242,7 @@ const SUPPORTED_WALLETS = {
     type: 'exchange',
     detector: () => false,
     connector: async () => {
-      const authUrl = 'https://www.gate.io/oauth/authorize';
-      window.open(authUrl, '_blank');
+      // Integração futura - sem abrir nova janela
       throw new Error('Integração Gate.io em desenvolvimento');
     }
   },
@@ -525,7 +515,7 @@ const WalletConnector = ({ isOpen, onClose, onConnect }) => {
           </ConnectedSection>
         ) : (
           <WalletGrid>
-            {Object.entries(SUPPORTED_WALLETS).map(([key, wallet]) => {
+            {sortWallets(SUPPORTED_WALLETS).map(([key, wallet]) => {
               const status = walletStatuses[key];
               const isLoading = isConnecting && selectedWallet === key;
               
@@ -535,11 +525,15 @@ const WalletConnector = ({ isOpen, onClose, onConnect }) => {
                   onClick={() => connectWallet(key)}
                   disabled={!status?.available || isLoading}
                   available={status?.available}
+                  isMetaMask={key === 'metamask'}
                 >
                   <WalletIcon>{wallet.icon}</WalletIcon>
                   <WalletInfo>
                     <WalletName>{wallet.name}</WalletName>
                     <WalletDescription>{wallet.description}</WalletDescription>
+                    {key === 'metamask' && (
+                      <WalletBadge>✨ Recomendado</WalletBadge>
+                    )}
                   </WalletInfo>
                   
                   <WalletStatus>
@@ -729,6 +723,38 @@ const WalletGrid = styled.div`
   padding: 2rem;
 `;
 
+// Função para ordenar carteiras (MetaMask primeiro)
+const sortWallets = (wallets) => {
+  const walletEntries = Object.entries(wallets);
+  
+  // Separar por tipo e popularidade
+  const metamask = walletEntries.filter(([key]) => key === 'metamask');
+  const popularWeb3 = walletEntries.filter(([key, wallet]) => 
+    key !== 'metamask' && wallet.type === 'web3' && wallet.popular
+  );
+  const otherWeb3 = walletEntries.filter(([key, wallet]) => 
+    key !== 'metamask' && wallet.type === 'web3' && !wallet.popular
+  );
+  const walletConnect = walletEntries.filter(([key, wallet]) => 
+    wallet.type === 'walletconnect'
+  );
+  const exchanges = walletEntries.filter(([key, wallet]) => 
+    wallet.type === 'exchange'
+  );
+  const hardware = walletEntries.filter(([key, wallet]) => 
+    wallet.type === 'hardware'
+  );
+  
+  return [
+    ...metamask,
+    ...popularWeb3,
+    ...otherWeb3,
+    ...walletConnect,
+    ...exchanges,
+    ...hardware
+  ];
+};
+
 const WalletCard = styled.div`
   display: flex;
   align-items: center;
@@ -764,6 +790,20 @@ const WalletDescription = styled.p`
   color: #ccc;
   margin: 0;
   font-size: 0.9rem;
+`;
+
+const WalletBadge = styled.div`
+  display: inline-block;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #000;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 `;
 
 const WalletStatus = styled.div`

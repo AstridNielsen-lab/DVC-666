@@ -308,6 +308,16 @@ const Presale = () => {
           </PurchaseCard>
         </PresaleContent>
       </motion.div>
+      
+      <WalletConnector
+        isOpen={walletModalOpen}
+        onClose={() => setWalletModalOpen(false)}
+        onConnect={(account, chainId) => {
+          console.log('Wallet connected:', account, chainId);
+          setWalletModalOpen(false);
+          checkWalletConnection();
+        }}
+      />
     </PresaleContainer>
   );
 };
