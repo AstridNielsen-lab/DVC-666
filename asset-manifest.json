@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/DVC-666/static/css/main.e6c13ad2.css",
+    "main.js": "/DVC-666/static/js/main.920ecd43.js",
+    "index.html": "/DVC-666/index.html",
+    "main.e6c13ad2.css.map": "/DVC-666/static/css/main.e6c13ad2.css.map",
+    "main.920ecd43.js.map": "/DVC-666/static/js/main.920ecd43.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.920ecd43.js"
+  ]
+}
