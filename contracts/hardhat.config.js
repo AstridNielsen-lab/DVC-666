@@ -58,14 +58,14 @@ module.exports = {
     // ETHEREUM TESTNETS
     goerli: {
       url: process.env.GOERLI_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 5,
       gasPrice: 20000000000,
       gas: 6000000
     },
     sepolia: {
       url: process.env.SEPOLIA_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 11155111,
       gasPrice: 20000000000,
       gas: 6000000
@@ -73,14 +73,14 @@ module.exports = {
     // BINANCE SMART CHAIN
     bsc: {
       url: process.env.BSC_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 56,
       gasPrice: 5000000000, // 5 gwei
       gas: 6000000
     },
     bscTestnet: {
       url: process.env.BSC_TESTNET_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 97,
       gasPrice: 10000000000,
       gas: 6000000
@@ -88,14 +88,14 @@ module.exports = {
     // POLYGON
     polygon: {
       url: process.env.POLYGON_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 137,
       gasPrice: 30000000000, // 30 gwei
       gas: 6000000
     },
     mumbai: {
       url: process.env.POLYGON_MUMBAI_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 80001,
       gasPrice: 30000000000,
       gas: 6000000
@@ -103,7 +103,7 @@ module.exports = {
     // ARBITRUM
     arbitrum: {
       url: process.env.ARBITRUM_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 42161,
       gasPrice: 1000000000, // 1 gwei
       gas: 30000000
@@ -111,7 +111,7 @@ module.exports = {
     // AVALANCHE
     avalanche: {
       url: process.env.AVALANCHE_RPC_URL,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: (process.env.PRIVATE_KEY && process.env.PRIVATE_KEY !== "your_private_key_here") ? [process.env.PRIVATE_KEY] : [],
       chainId: 43114,
       gasPrice: 25000000000, // 25 gwei
       gas: 8000000

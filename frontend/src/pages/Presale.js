@@ -6,19 +6,20 @@ import { ethers } from 'ethers';
 import toast from 'react-hot-toast';
 import WalletConnector from '../components/WalletConnector';
 import useWallet from '../hooks/useWallet';
+import { 
+  DVC666_ABI, 
+  getContractAddress, 
+  isValidContractAddress, 
+  TOKEN_METADATA,
+  CONTRACT_CONSTANTS
+} from '../contracts/contracts';
 
-// Contract address - will be updated with actual deployed address
-const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || null;
-const PRESALE_ABI = [
-  "function buyTokens() external payable",
-  "function getTokenAmount(uint256 ethAmount) external view returns (uint256)",
-  "function getPresaleInfo() external view returns (uint256 price, uint256 sold, uint256 remaining, bool active)",
-  "function getMinMaxPurchase() external view returns (uint256 min, uint256 max)",
-  "function name() external view returns (string)",
-  "function symbol() external view returns (string)",
-  "function decimals() external view returns (uint8)",
-  "event TokensPurchased(address indexed buyer, uint256 amount, uint256 cost)"
-];
+// Get contract address based on current network
+const getActiveContractAddress = (chainId) => {
+  const address = getContractAddress(chainId);
+  console.log('Using contract address:', address, 'for chainId:', chainId);
+  return address;
+};
 
 const Presale = () => {
   const wallet = useWallet();
@@ -50,15 +51,18 @@ const Presale = () => {
   }, []);
 
   const initContract = useCallback(async () => {
-    if (!CONTRACT_ADDRESS) {
-      setContractError('Contract address not configured');
-      console.warn('Contract address not configured');
+    const chainId = wallet.chainId || 1337;
+    const contractAddress = getActiveContractAddress(chainId);
+    
+    if (!contractAddress) {
+      setContractError('Contract address not configured for this network');
+      console.warn('Contract address not configured for chainId:', chainId);
       return;
     }
     
-    if (!ethers.utils.isAddress(CONTRACT_ADDRESS)) {
+    if (!isValidContractAddress(contractAddress)) {
       setContractError('Invalid contract address format');
-      console.error('Invalid contract address:', CONTRACT_ADDRESS);
+      console.error('Invalid contract address:', contractAddress);
       return;
     }
     
@@ -66,7 +70,7 @@ const Presale = () => {
       try {
         const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = web3Provider.getSigner();
-        const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, PRESALE_ABI, signer);
+        const contractInstance = new ethers.Contract(contractAddress, DVC666_ABI, signer);
         
         // Test if contract exists by calling a simple view function
         await contractInstance.name();
@@ -129,15 +133,18 @@ const Presale = () => {
   const addTokenToMetaMask = async () => {
     if (window.ethereum && contract) {
       try {
+        const chainId = wallet.chainId || 1337;
+        const contractAddress = getActiveContractAddress(chainId);
+        
         await window.ethereum.request({
           method: 'wallet_watchAsset',
           params: {
             type: 'ERC20',
             options: {
-              address: CONTRACT_ADDRESS,
-              symbol: 'DVC666',
-              decimals: 18,
-              image: 'https://your-domain.com/dvc666-logo.png'
+              address: contractAddress,
+              symbol: TOKEN_METADATA.symbol,
+              decimals: TOKEN_METADATA.decimals,
+              image: TOKEN_METADATA.image
             }
           }
         });
