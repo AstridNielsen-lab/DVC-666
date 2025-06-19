@@ -130,9 +130,6 @@ const Dashboard = () => {
       {/* Modern Sidebar */}
       <Sidebar collapsed={sidebarCollapsed}>
         <SidebarHeader>
-          <SidebarToggle onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
-            {sidebarCollapsed ? <FaBars /> : <FaTimes />}
-          </SidebarToggle>
           {!sidebarCollapsed && (
             <>
               <Logo size="40px" color="#8B0000" />
@@ -169,6 +166,10 @@ const Dashboard = () => {
             <FaCircle />
             {!sidebarCollapsed && <span>Online</span>}
           </StatusIndicator>
+          <SidebarToggle collapsed={sidebarCollapsed} onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+            {sidebarCollapsed ? <FaBars /> : <FaTimes />}
+            {!sidebarCollapsed && <span>Fechar Menu</span>}
+          </SidebarToggle>
         </SidebarFooter>
       </Sidebar>
       
@@ -1445,20 +1446,35 @@ const SidebarToggle = styled.button`
   background: rgba(139, 0, 0, 0.1);
   border: 1px solid rgba(139, 0, 0, 0.3);
   color: #FF4500;
-  padding: 0.75rem;
+  padding: ${props => props.collapsed ? '0.75rem' : '0.75rem 1rem'};
   border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
+  gap: ${props => props.collapsed ? '0' : '0.5rem'};
   transition: all 0.3s ease;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 2rem;
+  width: ${props => props.collapsed ? '2.5rem' : 'calc(100% - 4rem)'};
   
   &:hover {
     background: rgba(139, 0, 0, 0.2);
     border-color: #FF4500;
-    transform: scale(1.05);
+    transform: scale(1.02);
+  }
+  
+  svg {
+    font-size: 1.1rem;
+    min-width: 1.1rem;
+  }
+  
+  span {
+    opacity: ${props => props.collapsed ? '0' : '1'};
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.9rem;
   }
 `;
 
