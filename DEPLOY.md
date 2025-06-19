@@ -4,10 +4,11 @@
 
 ### ✅ Frontend
 - **Status**: ✅ Deployed
-- **URL**: https://frontend-l24rjhxz6-julio-cesar-campos-machados-projects.vercel.app
+- **URL**: https://frontend-lq9j6bbuc-julio-cesar-campos-machados-projects.vercel.app
 - **Platform**: Vercel
 - **Build**: Production optimized
 - **Environment**: Production
+- **Build Duration**: 27s
 
 ### ✅ Smart Contract
 - **Status**: ✅ Deployed
