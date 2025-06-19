@@ -207,8 +207,11 @@ const Presale = () => {
       >
         <PresaleHeader>
           <FaFire />
-          <h1>DVC666 Presale</h1>
-          <p>Get DVC666 Coin tokens at the best price - 0.00010382 ETH each!</p>
+          <h1>DVC666 Presale - 1ª Chave Aberta</h1>
+          <p>Get DVC666 Coin tokens at presale price - 0.00010382 ETH ($0.001 USD) each!</p>
+          <PhaseInfo>
+            🔑 <strong>Primeira Chave Desbloqueada</strong> - 8 evoluções restantes até 2027
+          </PhaseInfo>
           <PresaleStatus active={presaleInfo.active}>
             {presaleInfo.active ? '🟢 PRESALE ACTIVE' : '🔴 PRESALE ENDED'}
           </PresaleStatus>
@@ -344,6 +347,19 @@ const PresaleContent = styled.div`
   margin: 0 auto;
 `;
 
+
+const PhaseInfo = styled.div`
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  margin: 1rem 0;
+  background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 69, 0, 0.2));
+  border: 1px solid rgba(139, 0, 0, 0.5);
+  border-radius: 25px;
+  color: ${props => props.theme.colors.text.primary};
+  font-size: 1rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+`;
 
 const PresaleStatus = styled.div`
   display: inline-block;

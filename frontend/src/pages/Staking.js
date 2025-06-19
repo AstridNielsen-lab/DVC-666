@@ -13,8 +13,11 @@ const Staking = () => {
       >
         <StakingHeader>
           <FaCoins />
-          <h1>DVC Staking</h1>
+          <h1>DVC666 Staking - 1ª Chave</h1>
           <p>Earn 6.66% APY by staking your Devil's Coin tokens</p>
+          <PhaseInfo>
+            🔑 <strong>Primeira Chave Desbloqueada</strong> - Indulgência sobre Abstinência
+          </PhaseInfo>
         </StakingHeader>
         
         <StakingContent>
@@ -59,6 +62,19 @@ const StakingHeader = styled.div`
     font-size: 1.2rem;
     color: ${props => props.theme.colors.text.secondary};
   }
+`;
+
+const PhaseInfo = styled.div`
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  margin: 1rem 0;
+  background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 69, 0, 0.2));
+  border: 1px solid rgba(139, 0, 0, 0.5);
+  border-radius: 25px;
+  color: ${props => props.theme.colors.text.primary};
+  font-size: 1rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
 `;
 
 const StakingContent = styled.div`
