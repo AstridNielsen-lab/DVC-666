@@ -2,6 +2,7 @@
   "name": "devils-coin-frontend",
   "version": "1.0.0",
   "description": "Devil's Coin Frontend - Dark themed cryptocurrency platform",
+  "homepage": "https://astridnielsen-lab.github.io/DVC-666",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -32,7 +33,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:production": "NODE_ENV=production react-scripts build",
-    "analyze": "npx source-map-explorer 'build/static/js/*.js'"
+    "analyze": "npx source-map-explorer 'build/static/js/*.js'",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -54,6 +57,7 @@
   },
   "devDependencies": {
     "@types/styled-components": "^5.1.26",
+    "gh-pages": "^6.3.0",
     "source-map-explorer": "^2.5.3"
   },
   "engines": {
@@ -62,4 +66,3 @@
   },
   "proxy": "http://localhost:5000"
 }
-
