@@ -6,85 +6,121 @@
 
 ![image](https://github.com/user-attachments/assets/c60506a3-38a5-4cfb-b6f0-82c4b262d1d7)
 
-
-
 **A revolutionary cryptocurrency inspired by the Nine Satanic Keys - Breaking the chains of traditional financial oppression**
 
 ---
 
-## 👹 The Legend of DVC666
+## 🔥 PRESALE ATIVO - PRIMEIRA CHAVE ABERTA!
 
-### 📜 The Origin Story
+### 🚨 **EVENTO PRESALE - APENAS 8 CHAVES RESTANTES**
 
-In the depths of the digital underworld, where traditional finance has enslaved humanity with its hypocrisy and false promises, a new force emerges. **DVC666** is not just a cryptocurrency - it is a rebellion, a manifestation of the **Nine Satanic Keys** translated into the realm of decentralized finance.
+| **Fase** | **Tokens Disponíveis** | **Preço** | **Bônus** | **Status** |
+|----------|------------------------|-----------|-----------|------------|
+| **Chave 1** | 6,666,666 DVC666 | **$0.001** | **66% Bônus** | **🔥 ATIVA** |
+| Chave 2 | 3,333,333 DVC666 | $0.0025 | 33% Bônus | 🔒 Bloqueada |
+| Chave 3 | 2,222,222 DVC666 | $0.005 | 22% Bônus | 🔒 Bloqueada |
+| Chave 4 | 1,111,111 DVC666 | $0.01 | 11% Bônus | 🔒 Bloqueada |
 
-Like the legendary keys that unlock the doors of spiritual and intellectual freedom, DVC666 represents the **first key** in a series of nine that will revolutionize how we perceive and interact with money. We are opening the **1st Key** - with **8 more keys yet to be revealed**.
+### 💎 **Benefícios da Primeira Chave:**
+- **🎯 Preço Inicial**: $0.001 por DVC666
+- **🔥 Bônus de 66%**: Receba 1.66 tokens por cada 1 comprado
+- **⚡ Staking Imediato**: 6.66% APY disponível após compra
+- **🛡️ Contratos Auditados**: Segurança máxima garantida
+- **💰 Liquidez Instantânea**: Tokens disponíveis imediatamente
 
-### 🔑 The First Key: Indulgence Over Abstinence
-
-> *"Satan represents indulgence, in vez da abstinência!"*
-
-While traditional banking systems preach financial abstinence and limitations, DVC666 embraces **financial indulgence**. Our presale offers unprecedented opportunities for those who dare to seize them. Why settle for the scraps thrown by centralized institutions when you can claim your rightful share of digital wealth?
-
-**The First Key grants you:**
-- 🎯 **Presale Access** to 13,333,333 DVC666 tokens
-- 🔥 **6.66% Staking APY** - Indulge in continuous passive income
-- ⚡ **Instant Gratification** - No traditional banking delays
-- 💎 **Deflationary Mechanics** - Watch your wealth grow as supply burns
-
-### 🗝️ The Remaining Eight Keys (Coming Soon)
-
-Each subsequent key will unlock new dimensions of the DVC666 ecosystem:
-
-🔑 **2nd Key**: Vital Existence - Real-world utility and partnerships
-🔑 **3rd Key**: Pure Wisdom - Advanced AI-driven trading algorithms
-🔑 **4th Key**: Deserved Kindness - Reward system for loyal holders
-🔑 **5th Key**: Righteous Vengeance - Protection against market manipulation
-🔑 **6th Key**: Personal Responsibility - Self-custody and decentralization
-🔑 **7th Key**: Human Nature - Community governance and voting
-🔑 **8th Key**: Embracing Desires - NFT marketplace and gaming integration
-🔑 **9th Key**: The Ultimate Truth - Full ecosystem revelation
-
-### 🎭 The Philosophy Behind DVC666
-
-DVC666 doesn't worship darkness - it embraces the **shadow of traditional finance** to illuminate a better path. Like LaVey's philosophy, we don't promote evil, but rather:
-
-- **Individual Financial Freedom** over institutional control
-- **Transparent Smart Contracts** over hidden banking fees
-- **Community Governance** over centralized authority
-- **Merit-Based Rewards** over arbitrary financial discrimination
-- **Technological Innovation** over outdated financial systems
+### 🎪 **Como Participar:**
+1. **Conecte sua Carteira** (MetaMask, Trust Wallet, etc.)
+2. **Escolha o Valor** (Mínimo: 0.01 ETH)
+3. **Confirme a Transação** e receba DVC666 + Bônus
+4. **Ative o Staking** para 6.66% APY
+5. **Prepare-se** para as próximas 8 chaves
 
 ---
 
-## 🔥 PRESALE: THE FIRST KEY IS OPENING
+## 👹 A História da DVC666 - Nossa Evolução
 
-### 🚨 Limited Time Presale Event
+### 📜 **A Origem da Moeda**
 
-**THE FIRST KEY IS NOW OPENING - ONLY 8 KEYS REMAIN SEALED**
+Nas profundezas do submundo digital, onde as finanças tradicionais escravizaram a humanidade com sua hipocrisia e falsas promessas, uma nova força emerge. **DVC666** não é apenas uma criptomoeda - é uma rebelião, uma manifestação das **Nove Chaves Satânicas** traduzidas para o reino das finanças descentralizadas.
 
-| Phase | Tokens Available | Price | Bonus |
-|-------|------------------|----------|-------|
-| **Key 1** | 6,666,666 DVC666 | $0.0066 | 66% Bonus |
-| Key 2 | 3,333,333 DVC666 | $0.0133 | 33% Bonus |
-| Key 3 | 2,222,222 DVC666 | $0.0199 | 22% Bonus |
-| Key 4 | 1,111,111 DVC666 | $0.0266 | 11% Bonus |
+### 🗝️ **Nossa Evolução em 9 Fases**
 
-### 💀 Presale Features
+**FASE ATUAL: 1ª CHAVE ABERTA - 8 EVOLUÇÕES RESTANTES**
 
-- **🔥 First Key Unlocked**: Get 66% bonus tokens during Phase 1
-- **⚡ Instant Liquidity**: Tokens available immediately after purchase
-- **🛡️ Smart Contract Security**: Fully audited and verified contracts
-- **💎 Deflationary Model**: 1% of each transaction burns tokens forever
-- **🎯 Early Staking Access**: Stake immediately for 6.66% APY
+#### 🔑 **1ª Chave: Indulgência sobre Abstinência** (ATIVA)
+> *"Satan representa indulgência, não abstinência!"*
 
-### 🎪 How to Participate
+- **Status**: 🔥 **DESBLOQUEADA**
+- **Benefícios**: Acesso ao presale com 66% de bônus
+- **Staking**: 6.66% APY disponível
+- **Filosofia**: Libertação financeira através da indulgência controlada
 
-1. **Connect Your Wallet** (MetaMask, Trust Wallet, etc.)
-2. **Choose Your Key Phase** (Earlier = Better Bonus)
-3. **Send ETH/BNB** to receive DVC666 + Bonus
-4. **Unlock Your Staking Power** immediately after purchase
-5. **Join the Community** and prepare for the next 8 keys
+#### 🔑 **2ª Chave: Existência Vital** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Utilidade no mundo real e parcerias estratégicas
+- **Previsão**: Q3 2025
+
+#### 🔑 **3ª Chave: Sabedoria Pura** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Algoritmos de trading alimentados por IA
+- **Previsão**: Q4 2025
+
+#### 🔑 **4ª Chave: Bondade Merecida** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Sistema de recompensas para holders fiéis
+- **Previsão**: Q1 2026
+
+#### 🔑 **5ª Chave: Vingança Justa** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Proteção contra manipulação de mercado
+- **Previsão**: Q2 2026
+
+#### 🔑 **6ª Chave: Responsabilidade Pessoal** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Auto-custódia e descentralização total
+- **Previsão**: Q3 2026
+
+#### 🔑 **7ª Chave: Natureza Humana** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Governança comunitária e votação
+- **Previsão**: Q4 2026
+
+#### 🔑 **8ª Chave: Abraçando Desejos** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Marketplace NFT e integração com games
+- **Previsão**: Q1 2027
+
+#### 🔑 **9ª Chave: A Verdade Absoluta** (Em breve)
+- **Status**: 🔒 Aguardando desbloqueio
+- **Foco**: Revelação completa do ecossistema
+- **Previsão**: Q2 2027
+
+### 🎭 **Nossa Filosofia**
+
+DVC666 não adora as trevas - abraça a **sombra das finanças tradicionais** para iluminar um caminho melhor. Como a filosofia de LaVey, não promovemos o mal, mas sim:
+
+- **Liberdade Financeira Individual** sobre controle institucional
+- **Contratos Inteligentes Transparentes** sobre taxas bancárias ocultas
+- **Governança Comunitária** sobre autoridade centralizada
+- **Recompensas Baseadas em Mérito** sobre discriminação financeira
+- **Inovação Tecnológica** sobre sistemas financeiros ultrapassados
+
+---
+
+## 🎯 **Interface do Site - Melhorias de Layout**
+
+### 📱 **Problemas Corrigidos:**
+- **✅ Boxes dentro da área do site**: Todos os elementos agora estão contidos na área de visualização
+- **✅ Seleção de contas reposicionada**: Menu de escolha de contas movido para área visível
+- **✅ Layout responsivo**: Otimizado para desktop e mobile
+- **✅ Área de visualização**: Todos os componentes dentro do viewport do usuário
+
+### 🎨 **Características do Site:**
+- **Design Dark Theme**: Tema vermelho/preto inspirado no conceito
+- **Interface Intuitiva**: Navegação simplificada e clara
+- **Responsividade Total**: Funciona perfeitamente em todos os dispositivos
+- **Animações Suaves**: Transições elegantes entre seções
+- **UX Otimizada**: Experiência do usuário aprimorada
 
 ---
 
