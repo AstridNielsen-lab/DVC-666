@@ -71,7 +71,7 @@ function App() {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <ThemeProvider theme={darkTheme}>
-        <Router>
+        <Router basename={process.env.NODE_ENV === 'production' ? '/DVC-666' : '/'}>
           <AppContainer>
             <GlobalStyles />
             <ParticleBackground />
