@@ -11,7 +11,8 @@ import {
   getContractAddress, 
   isValidContractAddress, 
   TOKEN_METADATA,
-  CONTRACT_CONSTANTS
+  CONTRACT_CONSTANTS,
+  NETWORK_CONFIGS
 } from '../contracts/contracts';
 
 // Get contract address based on current network
@@ -35,33 +36,115 @@ const Presale = () => {
   });
   const [contract, setContract] = useState(null);
   const [contractError, setContractError] = useState(null);
+  const [networkStatus, setNetworkStatus] = useState({
+    isCorrectNetwork: true,
+    targetNetwork: 'Ethereum',
+    targetChainId: 1,
+    currentChainId: null
+  });
 
   const loadPresaleInfo = useCallback(async (contractInstance) => {
     try {
-      const info = await contractInstance.getPresaleInfo();
-      setPresaleInfo({
-        price: ethers.utils.formatEther(info.price),
-        sold: ethers.utils.formatEther(info.sold),
-        remaining: ethers.utils.formatEther(info.remaining),
-        active: info.active
-      });
+      // Use try/catch to gracefully handle contract not being available
+      if (!contractInstance) {
+        console.log('Contract not initialized, using default presale info');
+        return;
+      }
+      
+      try {
+        const info = await contractInstance.getPresaleInfo();
+        setPresaleInfo({
+          price: ethers.utils.formatEther(info.price),
+          sold: ethers.utils.formatEther(info.sold),
+          remaining: ethers.utils.formatEther(info.remaining),
+          active: info.active
+        });
+      } catch (error) {
+        console.log('Error calling getPresaleInfo, using fallback values', error);
+        // Keep using the default values set in useState
+      }
     } catch (error) {
       console.error('Error loading presale info:', error);
     }
   }, []);
 
+  // Function to switch networks
+  const switchNetwork = async (targetChainId) => {
+    if (!window.ethereum) return false;
+    
+    try {
+      // Convert to hex
+      const chainIdHex = `0x${targetChainId.toString(16)}`;
+      
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: chainIdHex }],
+      });
+      
+      return true;
+    } catch (error) {
+      // This error code indicates that the chain has not been added to MetaMask
+      if (error.code === 4902) {
+        try {
+          const network = NETWORK_CONFIGS[targetChainId];
+          if (!network) return false;
+          
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: `0x${targetChainId.toString(16)}`,
+              chainName: network.name,
+              nativeCurrency: network.nativeCurrency,
+              rpcUrls: [network.rpcUrl],
+              blockExplorerUrls: [network.blockExplorer],
+            }],
+          });
+          
+          return true;
+        } catch (addError) {
+          console.error('Error adding network:', addError);
+          return false;
+        }
+      }
+      console.error('Error switching network:', error);
+      return false;
+    }
+  };
+
+  const validateNetworkAndSetStatus = useCallback((chainId) => {
+    // List of supported networks for the DVC666 contract
+    const supportedNetworks = [1, 1337, 11155111]; // Mainnet, Localhost, Sepolia
+    const isSupported = supportedNetworks.includes(chainId);
+    
+    // For production use mainnet (1), for local dev use localhost (1337)
+    const targetChainId = process.env.NODE_ENV === 'production' ? 1 : 1337;
+    
+    setNetworkStatus({
+      isCorrectNetwork: isSupported,
+      targetNetwork: NETWORK_CONFIGS[targetChainId]?.name || 'Ethereum',
+      targetChainId: targetChainId,
+      currentChainId: chainId
+    });
+    
+    return isSupported;
+  }, []);
+
   const initContract = useCallback(async () => {
-    const chainId = wallet.chainId || 1337;
+    const chainId = wallet.chainId || 1;
+    
+    // Validate network first
+    const isValidNetwork = validateNetworkAndSetStatus(chainId);
+    
     const contractAddress = getActiveContractAddress(chainId);
     
     if (!contractAddress) {
-      setContractError('Contract address not configured for this network');
+      setContractError(`Contract address not configured for network ID ${chainId}. Please switch to a supported network.`);
       console.warn('Contract address not configured for chainId:', chainId);
       return;
     }
     
     if (!isValidContractAddress(contractAddress)) {
-      setContractError('Invalid contract address format');
+      setContractError(`Invalid contract address format: ${contractAddress}`);
       console.error('Invalid contract address:', contractAddress);
       return;
     }
@@ -72,37 +155,75 @@ const Presale = () => {
         const signer = web3Provider.getSigner();
         const contractInstance = new ethers.Contract(contractAddress, DVC666_ABI, signer);
         
-        // Test if contract exists by calling a simple view function
-        await contractInstance.name();
-        
-        setContract(contractInstance);
-        setContractError(null);
-        await loadPresaleInfo(contractInstance);
+        // Test if contract exists by calling a simple view function with more robust error handling
+        try {
+          await contractInstance.name();
+          // If we reach here, the contract is valid and working
+          setContract(contractInstance);
+          setContractError(null);
+          await loadPresaleInfo(contractInstance);
+        } catch (nameError) {
+          console.log("Couldn't retrieve contract name:", nameError);
+          
+          // Differentiate between different types of errors
+          if (nameError.message.includes("call revert exception")) {
+            // Contract exists but name() function fails - could be wrong ABI or incorrect implementation
+            console.log("Contract exists but name() function call failed. Using demo mode.");
+            setContract(contractInstance); // Still set the contract to allow other functions to work
+            setContractError("Contract communication error. Some features may be limited.");
+          } else {
+            // More serious error - contract might not be deployed
+            setContractError(`Contract not properly deployed on ${NETWORK_CONFIGS[chainId]?.name || 'this network'}. Please switch networks or check deployment.`);
+            setContract(null);
+          }
+        }
       } catch (error) {
         console.error('Error initializing contract:', error);
-        setContractError('Contract not deployed or network mismatch');
+        
+        // More specific error messages based on the error type
         if (error.message.includes('ENS')) {
           setContractError('Invalid contract address - ENS resolution failed');
+        } else if (error.code === 'NETWORK_ERROR') {
+          setContractError('Network connection error. Please check your internet connection.');
+        } else if (error.message.includes('account')) {
+          setContractError('Wallet account access denied. Please connect your wallet.');
+        } else {
+          setContractError(`Contract initialization error: ${error.message.slice(0, 100)}`);
         }
+        
+        setContract(null);
       }
     } else {
-      setContractError('MetaMask not detected');
+      setContractError('Web3 wallet not detected. Please install MetaMask or another Web3 wallet.');
     }
-  }, [loadPresaleInfo]);
+  }, [loadPresaleInfo, validateNetworkAndSetStatus, wallet.chainId]);
 
   const checkWalletConnection = useCallback(async () => {
     if (window.ethereum) {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        
+        // Get current chain ID
+        const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
+        const chainId = parseInt(chainIdHex, 16);
+        
+        // Validate the network and set status
+        validateNetworkAndSetStatus(chainId);
+        
         if (accounts.length > 0) {
           // wallet state is managed by useWallet hook
           await initContract();
+        } else {
+          setContractError('Please connect your wallet to participate in the presale');
         }
       } catch (error) {
         console.error('Error checking wallet:', error);
+        setContractError(`Wallet connection error: ${error.message}`);
       }
+    } else {
+      setContractError('Web3 wallet not detected. Please install MetaMask or another Web3 wallet.');
     }
-  }, [initContract]);
+  }, [initContract, validateNetworkAndSetStatus]);
 
   const calculateTokenAmount = useCallback(() => {
     if (ethAmount && presaleInfo.price) {
@@ -269,6 +390,19 @@ const Presale = () => {
                 </ConnectButton>
                 <p>Conecte sua carteira para participar da presale</p>
               </ConnectSection>
+            ) : !networkStatus.isCorrectNetwork ? (
+              <NetworkErrorSection>
+                <ErrorIcon>⚠️</ErrorIcon>
+                <ErrorTitle>Wrong Network Detected</ErrorTitle>
+                <ErrorMessage>
+                  Please switch to {networkStatus.targetNetwork} to interact with the presale contract.
+                </ErrorMessage>
+                <SwitchNetworkButton 
+                  onClick={() => switchNetwork(networkStatus.targetChainId)}
+                >
+                  Switch to {networkStatus.targetNetwork}
+                </SwitchNetworkButton>
+              </NetworkErrorSection>
             ) : (
               <PurchaseSection>
                 <WalletInfo>
@@ -650,6 +784,32 @@ const ErrorNote = styled.div`
   
   li {
     margin-bottom: 0.25rem;
+  }
+`;
+
+const NetworkErrorSection = styled.div`
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 165, 0, 0.1);
+  border: 1px solid rgba(255, 165, 0, 0.3);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const SwitchNetworkButton = styled.button`
+  background: linear-gradient(135deg, #ff8c00, #ff4500);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
   }
 `;
 
