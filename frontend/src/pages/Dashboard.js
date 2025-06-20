@@ -129,10 +129,12 @@ const Dashboard = () => {
     <DashboardLayout>
       {/* Modern Sidebar */}
       <Sidebar collapsed={sidebarCollapsed}>
-        <SidebarHeader>
-          {!sidebarCollapsed && (
+        <SidebarHeader collapsed={sidebarCollapsed}>
+          {sidebarCollapsed ? (
+            <Logo size="32px" color="#FF4500" />
+          ) : (
             <>
-              <Logo size="40px" color="#8B0000" />
+              <Logo size="40px" color="#FF4500" />
               <SidebarTitle>DVC666</SidebarTitle>
             </>
           )}
@@ -1314,35 +1316,73 @@ const DashboardLayout = styled.div`
     rgba(26, 26, 26, 0.95) 50%,
     rgba(42, 42, 42, 0.95) 100%
   );
+  position: relative;
 `;
 
 const Sidebar = styled.div`
   width: ${props => props.collapsed ? '80px' : '280px'};
   background: linear-gradient(180deg, 
-    rgba(15, 15, 15, 0.95) 0%,
-    rgba(25, 25, 25, 0.9) 100%
+    rgba(15, 15, 15, 0.98) 0%,
+    rgba(25, 25, 25, 0.95) 50%,
+    rgba(20, 20, 20, 0.98) 100%
   );
-  border-right: 1px solid rgba(139, 0, 0, 0.2);
+  border-right: 2px solid rgba(139, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   position: fixed;
   height: 100vh;
-  z-index: 100;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backdrop-filter: blur(15px);
+  box-shadow: ${props => props.collapsed ? 
+    '2px 0 15px rgba(139, 0, 0, 0.1)' : 
+    '4px 0 20px rgba(139, 0, 0, 0.15)'
+  };
+  
+  /* Hover effect for collapsed sidebar */
+  &:hover {
+    ${props => props.collapsed && `
+      box-shadow: 4px 0 25px rgba(139, 0, 0, 0.2);
+      border-right-color: rgba(139, 0, 0, 0.4);
+    `}
+  }
   
   @media (max-width: 768px) {
-    width: ${props => props.collapsed ? '0px' : '280px'};
+    width: ${props => props.collapsed ? '0px' : '300px'};
     transform: translateX(${props => props.collapsed ? '-100%' : '0'});
+    box-shadow: ${props => props.collapsed ? 
+      'none' : 
+      '4px 0 30px rgba(0, 0, 0, 0.5), 0 0 50px rgba(139, 0, 0, 0.2)'
+    };
+  }
+  
+  @media (max-width: 480px) {
+    width: ${props => props.collapsed ? '0px' : '100vw'};
   }
 `;
 
 const SidebarHeader = styled.div`
-  padding: 2rem;
-  border-bottom: 1px solid rgba(139, 0, 0, 0.1);
+  padding: ${props => props.collapsed ? '1.5rem 1rem' : '2rem'};
+  border-bottom: 1px solid rgba(139, 0, 0, 0.2);
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: ${props => props.collapsed ? '0' : '1rem'};
+  justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
+  transition: all 0.3s ease;
+  background: rgba(139, 0, 0, 0.05);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: ${props => props.collapsed ? '40px' : '80%'};
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #FF4500, transparent);
+    transition: width 0.3s ease;
+  }
 `;
 
 const SidebarTitle = styled.h1`
@@ -1350,12 +1390,38 @@ const SidebarTitle = styled.h1`
   font-weight: 700;
   color: #FF4500;
   margin: 0;
-  text-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+  text-shadow: 0 0 15px rgba(255, 69, 0, 0.6);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    text-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+    transform: scale(1.02);
+  }
 `;
 
 const SidebarNav = styled.nav`
   flex: 1;
   padding: 1rem 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(139, 0, 0, 0.1);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(139, 0, 0, 0.3);
+    border-radius: 2px;
+    
+    &:hover {
+      background: rgba(139, 0, 0, 0.5);
+    }
+  }
 `;
 
 const NavItem = styled.div`
@@ -1363,60 +1429,113 @@ const NavItem = styled.div`
   align-items: center;
   gap: ${props => props.collapsed ? '0' : '1rem'};
   padding: ${props => props.collapsed ? '1rem' : '1rem 2rem'};
+  margin: ${props => props.collapsed ? '0.25rem 0.5rem' : '0.25rem 1rem'};
   color: ${props => props.active ? '#fff' : '#ccc'};
   background: ${props => props.active ? 
-    'linear-gradient(90deg, rgba(139, 0, 0, 0.3), rgba(255, 69, 0, 0.1))' : 
+    'linear-gradient(90deg, rgba(139, 0, 0, 0.4), rgba(255, 69, 0, 0.2))' : 
     'transparent'
   };
-  border-right: ${props => props.active ? '3px solid #FF4500' : '3px solid transparent'};
+  border: ${props => props.active ? '1px solid rgba(255, 69, 0, 0.4)' : '1px solid transparent'};
+  border-radius: ${props => props.collapsed ? '12px' : '12px'};
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   font-weight: 600;
   text-decoration: none;
   justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
   position: relative;
+  overflow: hidden;
+  
+  /* Glowing effect for active items */
+  ${props => props.active && `
+    box-shadow: 
+      0 0 15px rgba(255, 69, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #FF4500, #FF6500);
+      box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+    }
+  `}
   
   &:hover {
-    background: linear-gradient(90deg, rgba(139, 0, 0, 0.2), rgba(255, 69, 0, 0.05));
+    background: ${props => props.active ? 
+      'linear-gradient(90deg, rgba(139, 0, 0, 0.5), rgba(255, 69, 0, 0.25))' :
+      'linear-gradient(90deg, rgba(139, 0, 0, 0.2), rgba(255, 69, 0, 0.1))'
+    };
     color: #fff;
-    border-right-color: #FF4500;
+    border-color: rgba(255, 69, 0, 0.3);
+    transform: ${props => props.collapsed ? 'scale(1.05)' : 'translateX(5px)'};
+    box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2);
   }
   
   svg {
-    font-size: 1.1rem;
-    min-width: 1.1rem;
+    font-size: 1.2rem;
+    min-width: 1.2rem;
+    transition: all 0.3s ease;
+    color: ${props => props.active ? '#FF4500' : 'inherit'};
+    
+    ${props => props.active && `
+      filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.6));
+    `}
   }
   
   span {
     opacity: ${props => props.collapsed ? '0' : '1'};
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
     white-space: nowrap;
+    font-size: 0.95rem;
+    overflow: hidden;
+    width: ${props => props.collapsed ? '0' : 'auto'};
   }
   
-  /* Tooltip for collapsed mode */
+  /* Enhanced tooltip for collapsed mode */
   ${props => props.collapsed && props.title && `
     &:hover::after {
       content: '${props.title}';
       position: absolute;
-      left: 100%;
+      left: calc(100% + 15px);
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.9);
+      background: linear-gradient(135deg, rgba(15, 15, 15, 0.95), rgba(25, 25, 25, 0.95));
       color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
       font-size: 0.9rem;
+      font-weight: 500;
       white-space: nowrap;
-      z-index: 1000;
-      margin-left: 1rem;
-      border: 1px solid rgba(139, 0, 0, 0.3);
+      z-index: 1001;
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 69, 0, 0.2);
+      backdrop-filter: blur(10px);
+      animation: ${slideUp} 0.2s ease-out;
+    }
+    
+    &:hover::before {
+      content: '';
+      position: absolute;
+      left: calc(100% + 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 8px solid rgba(15, 15, 15, 0.95);
+      z-index: 1002;
     }
   `}
 `;
 
 const SidebarFooter = styled.div`
   padding: 1rem 0;
-  border-top: 1px solid rgba(139, 0, 0, 0.1);
+  border-top: 1px solid rgba(139, 0, 0, 0.2);
+  background: rgba(139, 0, 0, 0.03);
 `;
 
 const StatusIndicator = styled.div`
@@ -1424,68 +1543,131 @@ const StatusIndicator = styled.div`
   align-items: center;
   gap: ${props => props.collapsed ? '0' : '0.5rem'};
   padding: ${props => props.collapsed ? '1rem' : '1rem 2rem'};
+  margin: ${props => props.collapsed ? '0.25rem 0.5rem' : '0.25rem 1rem'};
   color: #00FF88;
   font-size: 0.9rem;
   font-weight: 500;
   justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(0, 255, 136, 0.1);
+    transform: ${props => props.collapsed ? 'scale(1.05)' : 'translateX(3px)'};
+  }
   
   svg {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     animation: ${pulse} 2s ease-in-out infinite;
-    min-width: 0.8rem;
+    min-width: 0.9rem;
+    filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.5));
   }
   
   span {
     opacity: ${props => props.collapsed ? '0' : '1'};
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
     white-space: nowrap;
+    overflow: hidden;
+    width: ${props => props.collapsed ? '0' : 'auto'};
   }
 `;
 
 const SidebarToggle = styled.button`
-  background: rgba(139, 0, 0, 0.1);
-  border: 1px solid rgba(139, 0, 0, 0.3);
+  background: ${props => props.collapsed ? 
+    'linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 69, 0, 0.1))' :
+    'linear-gradient(135deg, rgba(139, 0, 0, 0.15), rgba(255, 69, 0, 0.05))'
+  };
+  border: 1px solid rgba(139, 0, 0, 0.4);
   color: #FF4500;
-  padding: ${props => props.collapsed ? '0.75rem' : '0.75rem 1rem'};
-  border-radius: 8px;
+  padding: ${props => props.collapsed ? '0.875rem' : '0.875rem 1.25rem'};
+  border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: ${props => props.collapsed ? 'center' : 'flex-start'};
-  gap: ${props => props.collapsed ? '0' : '0.5rem'};
-  transition: all 0.3s ease;
+  gap: ${props => props.collapsed ? '0' : '0.75rem'};
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   font-size: 1rem;
   font-weight: 600;
-  margin: 1rem 2rem;
-  width: ${props => props.collapsed ? '2.5rem' : 'calc(100% - 4rem)'};
+  margin: ${props => props.collapsed ? '1rem 0.5rem' : '1rem 1rem'};
+  width: ${props => props.collapsed ? '3rem' : 'calc(100% - 2rem)'};
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
   
   &:hover {
-    background: rgba(139, 0, 0, 0.2);
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.3), rgba(255, 69, 0, 0.2));
     border-color: #FF4500;
-    transform: scale(1.02);
+    transform: ${props => props.collapsed ? 'scale(1.08)' : 'scale(1.02)'};
+    box-shadow: 
+      0 5px 20px rgba(139, 0, 0, 0.3),
+      0 0 15px rgba(255, 69, 0, 0.2);
+    color: #fff;
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: ${props => props.collapsed ? 'scale(1.02)' : 'scale(0.98)'};
   }
   
   svg {
-    font-size: 1.1rem;
-    min-width: 1.1rem;
+    font-size: 1.2rem;
+    min-width: 1.2rem;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 3px rgba(255, 69, 0, 0.4));
   }
   
   span {
     opacity: ${props => props.collapsed ? '0' : '1'};
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
     white-space: nowrap;
     font-size: 0.9rem;
+    overflow: hidden;
+    width: ${props => props.collapsed ? '0' : 'auto'};
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 `;
 
 const MainContent = styled.div`
   flex: 1;
   margin-left: ${props => props.sidebarCollapsed ? '80px' : '280px'};
-  transition: margin-left 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  min-height: 100vh;
   
   @media (max-width: 768px) {
     margin-left: 0;
+    padding: ${props => props.sidebarCollapsed ? '0' : '0 1rem'};
   }
+  
+  /* Overlay for mobile when sidebar is open */
+  ${props => !props.sidebarCollapsed && `
+    @media (max-width: 768px) {
+      &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        backdrop-filter: blur(2px);
+      }
+    }
+  `}
 `;
 
 // Modern Chart Components (CoinMarketCap Style)
