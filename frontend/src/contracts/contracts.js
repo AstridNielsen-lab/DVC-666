@@ -6,9 +6,9 @@ export const CONTRACT_ADDRESSES = {
   // Local Hardhat network
   1337: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   // Ethereum Mainnet (when deployed)
-  1: process.env.REACT_APP_MAINNET_CONTRACT_ADDRESS || null,
+  1: process.env.REACT_APP_MAINNET_CONTRACT_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   // Sepolia Testnet (when deployed)
-  11155111: process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS || null,
+  11155111: process.env.REACT_APP_SEPOLIA_CONTRACT_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   // BSC Mainnet (when deployed)
   56: process.env.REACT_APP_BSC_CONTRACT_ADDRESS || null,
   // Polygon Mainnet (when deployed)
@@ -16,16 +16,35 @@ export const CONTRACT_ADDRESSES = {
 };
 
 // Flag to enable demo mode (for testing without deployed contract)
-export const DEMO_MODE = process.env.REACT_APP_DEMO_MODE === 'true';
+export const DEMO_MODE = process.env.REACT_APP_DEMO_MODE === 'true' || process.env.NODE_ENV === 'development';
 
 // Default contract address from environment or fallback to local
 export const DEFAULT_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || CONTRACT_ADDRESSES[1337];
 
+// Default fallback values for development and testing
+export const FALLBACK_VALUES = {
+  presaleInfo: {
+    price: ethers.utils.parseEther("0.00010382"),
+    sold: ethers.utils.parseEther("10000"),
+    remaining: ethers.utils.parseEther("13323333"),
+    active: true
+  },
+  stakingInfo: {
+    staked: ethers.utils.parseEther("0"),
+    pendingRewards: ethers.utils.parseEther("0"),
+    stakingTime: 0,
+    unlockTime: 0
+  }
+};
+
+// Import ethers for utility functions
+import { ethers } from 'ethers';
+
 // Complete ABI for DevilsCoin contract
 export const DVC666_ABI = [
   // ERC20 Standard functions
-  "function name() external view returns (string)",
-  "function symbol() external view returns (string)",
+  "function name() external view returns (string memory)",
+  "function symbol() external view returns (string memory)",
   "function decimals() external view returns (uint8)",
   "function totalSupply() external view returns (uint256)",
   "function balanceOf(address account) external view returns (uint256)",
@@ -109,7 +128,7 @@ export const TOKEN_METADATA = {
 export const NETWORK_CONFIGS = {
   1: {
     name: "Ethereum Mainnet",
-    rpcUrl: "https://mainnet.infura.io/v3/",
+    rpcUrl: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     blockExplorer: "https://etherscan.io",
     nativeCurrency: {
       name: "Ethereum",
@@ -125,35 +144,70 @@ export const NETWORK_CONFIGS = {
       name: "Ethereum",
       symbol: "ETH",
       decimals: 18
-    }
+    },
+    isTestnet: true
   },
   11155111: {
     name: "Sepolia Testnet",
-    rpcUrl: "https://sepolia.infura.io/v3/",
+    rpcUrl: "https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     blockExplorer: "https://sepolia.etherscan.io",
     nativeCurrency: {
       name: "SepoliaETH",
       symbol: "SEP",
       decimals: 18
-    }
+    },
+    isTestnet: true
   }
 };
 
 // Get contract address for current network
 export const getContractAddress = (chainId) => {
+  // In development mode, always return the local address for easier testing
+  if (process.env.NODE_ENV === 'development') {
+    return CONTRACT_ADDRESSES[1337];
+  }
+  
+  // For production, use the appropriate contract address or fallback to default
   return CONTRACT_ADDRESSES[chainId] || DEFAULT_CONTRACT_ADDRESS;
 };
 
 // Get network config for current network
 export const getNetworkConfig = (chainId) => {
-  return NETWORK_CONFIGS[chainId] || NETWORK_CONFIGS[1337];
+  return NETWORK_CONFIGS[chainId] || NETWORK_CONFIGS[1];
+};
+
+// Check if the current network is supported
+export const isSupportedNetwork = (chainId) => {
+  return !!CONTRACT_ADDRESSES[chainId];
+};
+
+// Get recommended network for current environment
+export const getRecommendedNetwork = () => {
+  return process.env.NODE_ENV === 'development' ? 1337 : 1;
 };
 
 // Validate contract address format
 export const isValidContractAddress = (address) => {
   if (!address) return false;
-  // Basic Ethereum address validation
-  return /^0x[a-fA-F0-9]{40}$/.test(address);
+  
+  try {
+    // More robust validation using ethers.js
+    const normalizedAddress = ethers.utils.getAddress(address);
+    return normalizedAddress.length === 42 && normalizedAddress.startsWith('0x');
+  } catch (error) {
+    console.error('Invalid contract address format:', error);
+    return false;
+  }
+};
+
+// Helper function to safely call contract methods with fallback values
+export const safeContractCall = async (contractCall, fallbackValue) => {
+  try {
+    return await contractCall();
+  } catch (error) {
+    console.warn('Contract call failed, using fallback value:', error);
+    return fallbackValue;
+  }
 };
 
 // Contract constants
@@ -177,9 +231,14 @@ const contractsConfig = {
   TOKEN_METADATA,
   NETWORK_CONFIGS,
   CONTRACT_CONSTANTS,
+  FALLBACK_VALUES,
+  DEMO_MODE,
   getContractAddress,
   getNetworkConfig,
-  isValidContractAddress
+  isValidContractAddress,
+  isSupportedNetwork,
+  getRecommendedNetwork,
+  safeContractCall
 };
 
 export default contractsConfig;

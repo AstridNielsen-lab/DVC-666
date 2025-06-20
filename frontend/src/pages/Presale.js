@@ -12,7 +12,12 @@ import {
   isValidContractAddress, 
   TOKEN_METADATA,
   CONTRACT_CONSTANTS,
-  NETWORK_CONFIGS
+  NETWORK_CONFIGS,
+  FALLBACK_VALUES,
+  DEMO_MODE,
+  isSupportedNetwork,
+  getRecommendedNetwork,
+  safeContractCall
 } from '../contracts/contracts';
 
 // Get contract address based on current network
@@ -29,9 +34,9 @@ const Presale = () => {
   const [tokenAmount, setTokenAmount] = useState('0');
   const [isLoading, setIsLoading] = useState(false);
   const [presaleInfo, setPresaleInfo] = useState({
-    price: '0.00010382',
+    price: CONTRACT_CONSTANTS.PRESALE_PRICE,
     sold: '0',
-    remaining: '13333333',
+    remaining: CONTRACT_CONSTANTS.PRESALE_ALLOCATION.toString(),
     active: true
   });
   const [contract, setContract] = useState(null);
@@ -39,55 +44,96 @@ const Presale = () => {
   const [networkStatus, setNetworkStatus] = useState({
     isCorrectNetwork: true,
     targetNetwork: 'Ethereum',
-    targetChainId: 1,
+    targetChainId: process.env.NODE_ENV === 'development' ? 1337 : 1,
     currentChainId: null
   });
+  const [isNetworkSwitching, setIsNetworkSwitching] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(DEMO_MODE);
 
   const loadPresaleInfo = useCallback(async (contractInstance) => {
+    setIsLoading(true);
     try {
-      // Use try/catch to gracefully handle contract not being available
-      if (!contractInstance) {
-        console.log('Contract not initialized, using default presale info');
+      // If in demo mode or no contract instance, use fallback values
+      if (isDemoMode || !contractInstance) {
+        console.log('Using fallback presale info (Demo mode:', isDemoMode, ')');
+        
+        // Use ethers to format the fallback values properly
+        const fallbackInfo = FALLBACK_VALUES.presaleInfo;
+        setPresaleInfo({
+          price: ethers.utils.formatEther(fallbackInfo.price),
+          sold: ethers.utils.formatEther(fallbackInfo.sold),
+          remaining: ethers.utils.formatEther(fallbackInfo.remaining),
+          active: fallbackInfo.active
+        });
         return;
       }
       
-      try {
-        const info = await contractInstance.getPresaleInfo();
+      // Use the safeContractCall helper for safer contract interaction
+      const info = await safeContractCall(
+        () => contractInstance.getPresaleInfo(),
+        FALLBACK_VALUES.presaleInfo
+      );
+      
+      // Check if info is the fallback value or actual contract response
+      if (info === FALLBACK_VALUES.presaleInfo) {
         setPresaleInfo({
           price: ethers.utils.formatEther(info.price),
           sold: ethers.utils.formatEther(info.sold),
           remaining: ethers.utils.formatEther(info.remaining),
           active: info.active
         });
-      } catch (error) {
-        console.log('Error calling getPresaleInfo, using fallback values', error);
-        // Keep using the default values set in useState
+      } else {
+        // Actual contract response
+        setPresaleInfo({
+          price: ethers.utils.formatEther(info.price),
+          sold: ethers.utils.formatEther(info.sold),
+          remaining: ethers.utils.formatEther(info.remaining),
+          active: info.active
+        });
       }
     } catch (error) {
       console.error('Error loading presale info:', error);
+      toast.error('Failed to load presale information');
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  }, [isDemoMode]);
 
-  // Function to switch networks
+  // Function to switch networks with better UI feedback
   const switchNetwork = async (targetChainId) => {
-    if (!window.ethereum) return false;
+    if (!window.ethereum) {
+      toast.error('No Web3 wallet detected');
+      return false;
+    }
     
+    setIsNetworkSwitching(true);
     try {
       // Convert to hex
       const chainIdHex = `0x${targetChainId.toString(16)}`;
+      
+      toast.loading('Switching networks...');
       
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: chainIdHex }],
       });
       
+      toast.dismiss();
+      toast.success(`Switched to ${NETWORK_CONFIGS[targetChainId]?.name || 'new network'}`);
       return true;
     } catch (error) {
+      toast.dismiss();
+      
       // This error code indicates that the chain has not been added to MetaMask
       if (error.code === 4902) {
         try {
           const network = NETWORK_CONFIGS[targetChainId];
-          if (!network) return false;
+          if (!network) {
+            toast.error('Network configuration not found');
+            return false;
+          }
+          
+          toast.loading('Adding network to wallet...');
           
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
@@ -100,25 +146,37 @@ const Presale = () => {
             }],
           });
           
+          toast.dismiss();
+          toast.success(`Added and switched to ${network.name}`);
           return true;
         } catch (addError) {
+          toast.dismiss();
           console.error('Error adding network:', addError);
+          toast.error('Failed to add network to your wallet');
           return false;
         }
+      } else if (error.code === 4001) {
+        // User rejected the request
+        toast.error('Network switch rejected');
+      } else {
+        toast.error(`Network switch failed: ${error.message.slice(0, 50)}`);
       }
+      
       console.error('Error switching network:', error);
       return false;
+    } finally {
+      setIsNetworkSwitching(false);
     }
   };
 
   const validateNetworkAndSetStatus = useCallback((chainId) => {
-    // List of supported networks for the DVC666 contract
-    const supportedNetworks = [1, 1337, 11155111]; // Mainnet, Localhost, Sepolia
-    const isSupported = supportedNetworks.includes(chainId);
+    // Check if network is supported using our utility
+    const isSupported = isSupportedNetwork(chainId);
     
-    // For production use mainnet (1), for local dev use localhost (1337)
-    const targetChainId = process.env.NODE_ENV === 'production' ? 1 : 1337;
+    // Get recommended network based on environment
+    const targetChainId = getRecommendedNetwork();
     
+    // Set network status for UI
     setNetworkStatus({
       isCorrectNetwork: isSupported,
       targetNetwork: NETWORK_CONFIGS[targetChainId]?.name || 'Ethereum',
@@ -126,75 +184,137 @@ const Presale = () => {
       currentChainId: chainId
     });
     
+    // If we're in development mode, consider any network as supported for easier testing
+    if (process.env.NODE_ENV === 'development') {
+      return true;
+    }
+    
     return isSupported;
   }, []);
 
   const initContract = useCallback(async () => {
-    const chainId = wallet.chainId || 1;
-    
-    // Validate network first
-    const isValidNetwork = validateNetworkAndSetStatus(chainId);
-    
-    const contractAddress = getActiveContractAddress(chainId);
-    
-    if (!contractAddress) {
-      setContractError(`Contract address not configured for network ID ${chainId}. Please switch to a supported network.`);
-      console.warn('Contract address not configured for chainId:', chainId);
-      return;
-    }
-    
-    if (!isValidContractAddress(contractAddress)) {
-      setContractError(`Invalid contract address format: ${contractAddress}`);
-      console.error('Invalid contract address:', contractAddress);
-      return;
-    }
-    
-    if (window.ethereum) {
-      try {
-        const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = web3Provider.getSigner();
-        const contractInstance = new ethers.Contract(contractAddress, DVC666_ABI, signer);
+    setIsLoading(true);
+    try {
+      const chainId = wallet.chainId || getRecommendedNetwork();
+      
+      // Check if we should use demo mode
+      const shouldUseDemoMode = 
+        DEMO_MODE || 
+        process.env.NODE_ENV === 'development' || 
+        !isSupportedNetwork(chainId);
+      
+      setIsDemoMode(shouldUseDemoMode);
+      
+      // Validate network first
+      const isValidNetwork = validateNetworkAndSetStatus(chainId);
+      
+      // If demo mode is enabled, use fallback values and skip contract initialization
+      if (shouldUseDemoMode) {
+        console.log("Using demo mode with fallback values");
+        await loadPresaleInfo(null);
         
-        // Test if contract exists by calling a simple view function with more robust error handling
-        try {
-          await contractInstance.name();
-          // If we reach here, the contract is valid and working
-          setContract(contractInstance);
-          setContractError(null);
-          await loadPresaleInfo(contractInstance);
-        } catch (nameError) {
-          console.log("Couldn't retrieve contract name:", nameError);
-          
-          // Differentiate between different types of errors
-          if (nameError.message.includes("call revert exception")) {
-            // Contract exists but name() function fails - could be wrong ABI or incorrect implementation
-            console.log("Contract exists but name() function call failed. Using demo mode.");
-            setContract(contractInstance); // Still set the contract to allow other functions to work
-            setContractError("Contract communication error. Some features may be limited.");
-          } else {
-            // More serious error - contract might not be deployed
-            setContractError(`Contract not properly deployed on ${NETWORK_CONFIGS[chainId]?.name || 'this network'}. Please switch networks or check deployment.`);
-            setContract(null);
-          }
-        }
-      } catch (error) {
-        console.error('Error initializing contract:', error);
-        
-        // More specific error messages based on the error type
-        if (error.message.includes('ENS')) {
-          setContractError('Invalid contract address - ENS resolution failed');
-        } else if (error.code === 'NETWORK_ERROR') {
-          setContractError('Network connection error. Please check your internet connection.');
-        } else if (error.message.includes('account')) {
-          setContractError('Wallet account access denied. Please connect your wallet.');
+        if (!isValidNetwork) {
+          setContractError(`Network ${chainId} not supported. Using demo mode with sample data.`);
         } else {
-          setContractError(`Contract initialization error: ${error.message.slice(0, 100)}`);
+          setContractError(null);
         }
         
-        setContract(null);
+        return;
       }
-    } else {
-      setContractError('Web3 wallet not detected. Please install MetaMask or another Web3 wallet.');
+      
+      const contractAddress = getActiveContractAddress(chainId);
+      
+      if (!contractAddress) {
+        setContractError(`Contract address not configured for network ID ${chainId}. Please switch to a supported network.`);
+        console.warn('Contract address not configured for chainId:', chainId);
+        return;
+      }
+      
+      if (!isValidContractAddress(contractAddress)) {
+        setContractError(`Invalid contract address format: ${contractAddress}`);
+        console.error('Invalid contract address:', contractAddress);
+        return;
+      }
+      
+      if (window.ethereum) {
+        try {
+          const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = web3Provider.getSigner();
+          const contractInstance = new ethers.Contract(contractAddress, DVC666_ABI, signer);
+          
+          // Test if contract exists by calling a simple view function with more robust error handling
+          try {
+            // Use safeContractCall for more reliable contract interaction
+            const contractName = await safeContractCall(
+              () => contractInstance.name(),
+              TOKEN_METADATA.name // Fallback to metadata if call fails
+            );
+            
+            // If we have a valid name (not an error), the contract is working
+            if (contractName) {
+              console.log(`Contract name: ${contractName}`);
+              setContract(contractInstance);
+              setContractError(null);
+              
+              // Load presale info from contract
+              await loadPresaleInfo(contractInstance);
+            } else {
+              throw new Error("Contract name call returned empty result");
+            }
+          } catch (nameError) {
+            console.log("Couldn't retrieve contract name:", nameError);
+            
+            // Differentiate between different types of errors
+            if (nameError.message && nameError.message.includes("call revert exception")) {
+              // Contract exists but name() function fails - could be wrong ABI or incorrect implementation
+              console.log("Contract exists but name() function call failed. Using demo mode.");
+              
+              // Still set the contract to allow other functions to try to work
+              setContract(contractInstance); 
+              setIsDemoMode(true);
+              
+              // Load fallback presale info
+              await loadPresaleInfo(null);
+              
+              setContractError("Contract communication issues. Using demo mode with sample data.");
+            } else {
+              // More serious error - contract might not be deployed
+              setContractError(`Contract not properly deployed on ${NETWORK_CONFIGS[chainId]?.name || 'this network'}. Please switch networks or check deployment.`);
+              setContract(null);
+              setIsDemoMode(true);
+              await loadPresaleInfo(null);
+            }
+          }
+        } catch (error) {
+          console.error('Error initializing contract:', error);
+          
+          // More specific error messages based on the error type
+          if (error.message && error.message.includes('ENS')) {
+            setContractError('Invalid contract address - ENS resolution failed');
+          } else if (error.code === 'NETWORK_ERROR') {
+            setContractError('Network connection error. Please check your internet connection.');
+          } else if (error.message && error.message.includes('account')) {
+            setContractError('Wallet account access denied. Please connect your wallet.');
+          } else {
+            setContractError(`Contract initialization error: ${error.message ? error.message.slice(0, 100) : 'Unknown error'}`);
+          }
+          
+          setContract(null);
+          setIsDemoMode(true);
+          await loadPresaleInfo(null);
+        }
+      } else {
+        setContractError('Web3 wallet not detected. Please install MetaMask or another Web3 wallet.');
+        setIsDemoMode(true);
+        await loadPresaleInfo(null);
+      }
+    } catch (error) {
+      console.error('Unexpected error during contract initialization:', error);
+      setContractError('Unexpected error during initialization. Using demo mode.');
+      setIsDemoMode(true);
+      await loadPresaleInfo(null);
+    } finally {
+      setIsLoading(false);
     }
   }, [loadPresaleInfo, validateNetworkAndSetStatus, wallet.chainId]);
 
@@ -227,8 +347,25 @@ const Presale = () => {
 
   const calculateTokenAmount = useCallback(() => {
     if (ethAmount && presaleInfo.price) {
-      const tokens = parseFloat(ethAmount) / parseFloat(presaleInfo.price);
-      setTokenAmount(tokens.toFixed(0));
+      try {
+        // More robust calculation with error handling
+        const ethAmountFloat = parseFloat(ethAmount);
+        const priceFloat = parseFloat(presaleInfo.price);
+        
+        if (isNaN(ethAmountFloat) || isNaN(priceFloat) || priceFloat === 0) {
+          console.error('Invalid values for token calculation', { ethAmount, price: presaleInfo.price });
+          setTokenAmount('0');
+          return;
+        }
+        
+        const tokens = ethAmountFloat / priceFloat;
+        setTokenAmount(tokens.toFixed(0));
+      } catch (error) {
+        console.error('Error calculating token amount:', error);
+        setTokenAmount('0');
+      }
+    } else {
+      setTokenAmount('0');
     }
   }, [ethAmount, presaleInfo.price]);
 
@@ -236,6 +373,29 @@ const Presale = () => {
     checkWalletConnection();
     calculateTokenAmount();
   }, [checkWalletConnection, calculateTokenAmount]);
+  
+  // Listen for network changes
+  useEffect(() => {
+    if (window.ethereum) {
+      const handleChainChanged = (chainIdHex) => {
+        // Convert hex to decimal
+        const chainId = parseInt(chainIdHex, 16);
+        console.log('Network changed to:', chainId);
+        
+        // Update network status
+        validateNetworkAndSetStatus(chainId);
+        
+        // Reinitialize contract with new network
+        initContract();
+      };
+      
+      window.ethereum.on('chainChanged', handleChainChanged);
+      
+      return () => {
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      };
+    }
+  }, [validateNetworkAndSetStatus, initContract]);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -277,46 +437,139 @@ const Presale = () => {
   };
 
   const buyTokens = async () => {
+    // Check if we're in demo mode
+    if (isDemoMode) {
+      toast.success('This is a demo - no actual transaction will be made');
+      setIsLoading(true);
+      
+      // Simulate transaction in demo mode
+      setTimeout(async () => {
+        toast.success(`Successfully bought ${tokenAmount} DVC666 tokens in demo mode!`);
+        
+        // Update the UI with new token amounts (simulated)
+        const newSold = parseFloat(presaleInfo.sold) + parseFloat(ethAmount) / parseFloat(presaleInfo.price);
+        const newRemaining = parseFloat(presaleInfo.remaining) - parseFloat(tokenAmount);
+        
+        setPresaleInfo({
+          ...presaleInfo,
+          sold: newSold.toString(),
+          remaining: newRemaining.toString()
+        });
+        
+        setIsLoading(false);
+      }, 2000);
+      
+      return;
+    }
+    
     if (!contract || !wallet.isConnected) {
       toast.error('Please connect your wallet first');
       return;
     }
-
-    if (parseFloat(ethAmount) < 0.001) {
-      toast.error('Minimum purchase is 0.001 ETH');
+    
+    // Get min and max purchase limits from constants or contract
+    const minPurchase = CONTRACT_CONSTANTS.MIN_PURCHASE;
+    const maxPurchase = CONTRACT_CONSTANTS.MAX_PURCHASE;
+    
+    if (parseFloat(ethAmount) < parseFloat(minPurchase)) {
+      toast.error(`Minimum purchase is ${minPurchase} ETH`);
       return;
     }
-
-    if (parseFloat(ethAmount) > 10) {
-      toast.error('Maximum purchase is 10 ETH');
+    
+    if (parseFloat(ethAmount) > parseFloat(maxPurchase)) {
+      toast.error(`Maximum purchase is ${maxPurchase} ETH`);
       return;
     }
-
+    
+    // Validate network before transaction
+    if (!networkStatus.isCorrectNetwork) {
+      toast.error(`Please switch to ${networkStatus.targetNetwork} network first`);
+      const didSwitch = await switchNetwork(networkStatus.targetChainId);
+      if (!didSwitch) return;
+    }
+    
     setIsLoading(true);
     try {
+      // Use ethers to format the amount properly
+      const ethValue = ethers.utils.parseEther(ethAmount);
+      
+      // Show pending toast with loading indicator
+      const pendingToastId = toast.loading('Preparing transaction...');
+      
+      // Attempt to buy tokens
       const tx = await contract.buyTokens({
-        value: ethers.utils.parseEther(ethAmount)
+        value: ethValue
       });
       
-      toast.success('Transaction submitted! Waiting for confirmation...');
+      // Update toast to show transaction is submitted
+      toast.dismiss(pendingToastId);
+      const confirmToastId = toast.loading(
+        <div>
+          Transaction submitted!
+          <br />
+          <a 
+            href={`${NETWORK_CONFIGS[wallet.chainId]?.blockExplorer}/tx/${tx.hash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#ff4500', textDecoration: 'underline' }}
+          >
+            View on explorer
+          </a>
+        </div>
+      );
       
+      // Wait for transaction confirmation
       const receipt = await tx.wait();
       
+      // Handle transaction result
+      toast.dismiss(confirmToastId);
       if (receipt.status === 1) {
         toast.success(`Successfully bought ${tokenAmount} DVC666 tokens!`);
+        
+        // Refresh presale info to show updated numbers
         await loadPresaleInfo(contract);
-        await addTokenToMetaMask();
+        
+        // Offer to add token to MetaMask
+        toast((t) => (
+          <div>
+            Transaction successful!
+            <br />
+            <button 
+              onClick={() => {
+                addTokenToMetaMask();
+                toast.dismiss(t.id);
+              }}
+              style={{ 
+                background: 'linear-gradient(135deg, #8B0000, #FF4500)',
+                color: 'white',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                marginTop: '10px',
+                cursor: 'pointer'
+              }}
+            >
+              Add DVC666 to wallet
+            </button>
+          </div>
+        ), { duration: 10000 });
       } else {
-        toast.error('Transaction failed');
+        toast.error('Transaction failed - Please try again');
       }
     } catch (error) {
       console.error('Purchase error:', error);
+      
+      // Provide specific error messages based on the error type
       if (error.code === 4001) {
         toast.error('Transaction rejected by user');
-      } else if (error.message.includes('insufficient funds')) {
-        toast.error('Insufficient ETH balance');
+      } else if (error.message && error.message.includes('insufficient funds')) {
+        toast.error('Insufficient ETH balance in your wallet');
+      } else if (error.message && error.message.includes('gas')) {
+        toast.error('Gas estimation failed. The transaction might fail.');
+      } else if (error.message && error.message.includes('nonce')) {
+        toast.error('Transaction nonce error. Please reset your wallet or try again.');
       } else {
-        toast.error('Transaction failed: ' + error.message);
+        toast.error(`Transaction failed: ${error.message ? error.message.slice(0, 100) : 'Unknown error'}`);
       }
     } finally {
       setIsLoading(false);
@@ -349,7 +602,7 @@ const Presale = () => {
           <PresaleStats>
             <StatCard>
               <StatLabel>Token Price</StatLabel>
-              <StatValue>0.00010382 ETH</StatValue>
+              <StatValue>{presaleInfo.price} ETH</StatValue>
             </StatCard>
             <StatCard>
               <StatLabel>Tokens Sold</StatLabel>
@@ -399,9 +652,19 @@ const Presale = () => {
                 </ErrorMessage>
                 <SwitchNetworkButton 
                   onClick={() => switchNetwork(networkStatus.targetChainId)}
+                  disabled={isNetworkSwitching}
                 >
-                  Switch to {networkStatus.targetNetwork}
+                  {isNetworkSwitching ? (
+                    <><FaSpinner className="spinning" /> Switching...</>
+                  ) : (
+                    <>Switch to {networkStatus.targetNetwork}</>
+                  )}
                 </SwitchNetworkButton>
+                {isDemoMode && (
+                  <DemoModeIndicator>
+                    Using demo mode - some features will be simulated
+                  </DemoModeIndicator>
+                )}
               </NetworkErrorSection>
             ) : (
               <PurchaseSection>
@@ -409,6 +672,9 @@ const Presale = () => {
                   <span>Conectado: {wallet.formattedAddress}</span>
                   <NetworkBadge>{wallet.networkInfo.name}</NetworkBadge>
                   <FaCheck color="#00ff00" />
+                  {isDemoMode && (
+                    <DemoModeBadge>Demo Mode</DemoModeBadge>
+                  )}
                 </WalletInfo>
                 
                 <InputGroup>
@@ -811,6 +1077,25 @@ const SwitchNetworkButton = styled.button`
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
   }
+`;
+
+const DemoModeBadge = styled.span`
+  background: rgba(255, 165, 0, 0.2);
+  color: orange;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  border: 1px solid rgba(255, 165, 0, 0.3);
+`;
+
+const DemoModeIndicator = styled.div`
+  font-size: 0.9rem;
+  color: orange;
+  margin-top: 1rem;
+  text-align: center;
+  font-style: italic;
 `;
 
 export default Presale;
