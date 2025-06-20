@@ -69,6 +69,11 @@ const NavContainer = styled.nav`
   background: rgba(26, 26, 26, 0.95);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid ${props => props.theme.colors.border.primary};
+  transition: all 0.3s ease;
+  
+  @media (max-width: 768px) {
+    z-index: 1100; /* Below dashboard sidebar on mobile */
+  }
 `;
 
 const NavContent = styled.div`
@@ -127,6 +132,7 @@ const NavItems = styled.div`
     transform: translateY(${props => props.isOpen ? '0' : '-100%'});
     transition: transform 0.3s ease;
     border-bottom: 1px solid ${props => props.theme.colors.border.primary};
+    z-index: 1100; /* Below dashboard sidebar */
   }
 `;
 
@@ -187,7 +193,7 @@ const Overlay = styled.div`
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: -1;
+  z-index: 1050; /* Below navbar menu and sidebar */
 
   @media (min-width: 769px) {
     display: none;

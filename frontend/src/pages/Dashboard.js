@@ -40,6 +40,40 @@ const Dashboard = () => {
   const [isWalletConnectorOpen, setIsWalletConnectorOpen] = useState(false);
   const [connectedWallets, setConnectedWallets] = useState([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Handle mobile sidebar behavior
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarCollapsed(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobile && !sidebarCollapsed) {
+        const sidebar = event.target.closest('[data-sidebar]');
+        const trigger = event.target.closest('[data-sidebar-trigger]');
+        
+        if (!sidebar && !trigger) {
+          setSidebarCollapsed(true);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobile, sidebarCollapsed]);
 
   // Navigation items - same as navbar
   const navItems = [
@@ -128,7 +162,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       {/* Modern Sidebar */}
-      <Sidebar collapsed={sidebarCollapsed}>
+      <Sidebar collapsed={sidebarCollapsed} data-sidebar>
         <SidebarHeader collapsed={sidebarCollapsed}>
           {sidebarCollapsed ? (
             <Logo size="32px" color="#FF4500" />
@@ -168,7 +202,12 @@ const Dashboard = () => {
             <FaCircle />
             {!sidebarCollapsed && <span>Online</span>}
           </StatusIndicator>
-          <SidebarToggle collapsed={sidebarCollapsed} onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+          <SidebarToggle 
+            collapsed={sidebarCollapsed} 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            data-sidebar-trigger
+            aria-label={sidebarCollapsed ? "Abrir menu" : "Fechar menu"}
+          >
             {sidebarCollapsed ? <FaBars /> : <FaTimes />}
             {!sidebarCollapsed && <span>Fechar Menu</span>}
           </SidebarToggle>
@@ -614,6 +653,10 @@ const DashboardContainer = styled.div`
     rgba(42, 42, 42, 0.95) 100%
   );
   color: ${props => props.theme.colors.text.primary};
+  
+  @media (max-width: 768px) {
+    padding: 70px 10px 20px;
+  }
 `;
 
 // Header Sections
@@ -1331,7 +1374,7 @@ const Sidebar = styled.div`
   flex-direction: column;
   position: fixed;
   height: 100vh;
-  z-index: 1000;
+  z-index: 1200; /* Increased to be above navbar */
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   backdrop-filter: blur(15px);
   box-shadow: ${props => props.collapsed ? 
@@ -1354,10 +1397,12 @@ const Sidebar = styled.div`
       'none' : 
       '4px 0 30px rgba(0, 0, 0, 0.5), 0 0 50px rgba(139, 0, 0, 0.2)'
     };
+    z-index: 1300; /* Even higher on mobile */
   }
   
   @media (max-width: 480px) {
     width: ${props => props.collapsed ? '0px' : '100vw'};
+    z-index: 1400;
   }
 `;
 
@@ -1663,8 +1708,9 @@ const MainContent = styled.div`
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+        z-index: 1199; /* Just below sidebar */
         backdrop-filter: blur(2px);
+        pointer-events: auto;
       }
     }
   `}

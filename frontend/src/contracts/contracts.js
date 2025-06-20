@@ -15,6 +15,9 @@ export const CONTRACT_ADDRESSES = {
   137: process.env.REACT_APP_POLYGON_CONTRACT_ADDRESS || null
 };
 
+// Flag to enable demo mode (for testing without deployed contract)
+export const DEMO_MODE = process.env.REACT_APP_DEMO_MODE === 'true';
+
 // Default contract address from environment or fallback to local
 export const DEFAULT_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || CONTRACT_ADDRESSES[1337];
 

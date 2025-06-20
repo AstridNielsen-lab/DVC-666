@@ -260,6 +260,11 @@ const GlobalStyles = createGlobalStyle`
   .Toastify__toast-container {
     z-index: ${props => props.theme.zIndex.toast};
   }
+  
+  /* React Hot Toast positioning */
+  div[data-hot-toast] {
+    z-index: 1800 !important;
+  }
 
   /* Dark mode specific styles */
   @media (prefers-reduced-motion: reduce) {
