@@ -1,6 +1,9 @@
 // contracts.js - Configuração centralizada dos contratos DVC666
 // Endereços e ABIs para interação com contratos inteligentes
 
+// Import ethers for utility functions
+import { ethers } from 'ethers';
+
 // Contract addresses for different networks
 export const CONTRACT_ADDRESSES = {
   // Local Hardhat network
@@ -36,9 +39,6 @@ export const FALLBACK_VALUES = {
     unlockTime: 0
   }
 };
-
-// Import ethers for utility functions
-import { ethers } from 'ethers';
 
 // Complete ABI for DevilsCoin contract
 export const DVC666_ABI = [
