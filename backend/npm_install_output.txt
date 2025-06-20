@@ -1,0 +1,8 @@
+# Running npm install in frontend directory
+# This will:
+# 1. Install the updated dependencies
+# 2. Force overrides for vulnerable transitive dependencies
+# 3. Update package-lock.json
+
+# Execute: cd ../frontend && npm install
+

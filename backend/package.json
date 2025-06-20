@@ -1,49 +1,57 @@
 {
-  "name": "devils-coin-backend",
+  "name": "dvc666-contracts",
   "version": "1.0.0",
-  "description": "Devil's Coin Backend API",
-  "main": "server.js",
+  "description": "Smart contracts for Devils Coin DVC666",
+  "main": "index.js",
   "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "npx hardhat run scripts/deploy.js --network sepolia",
+    "deploy:mainnet": "npx hardhat run scripts/deploy.js --network mainnet",
+    "deploy:bsc": "npx hardhat run scripts/deploy.js --network bsc",
+    "node": "npx hardhat node",
+    "console": "npx hardhat console",
+    "verify:sepolia": "npx hardhat verify --network sepolia",
+    "verify:mainnet": "npx hardhat verify --network mainnet",
+    "verify:bsc": "npx hardhat verify --network bsc",
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "echo 'Build completed'",
-    "vercel-build": "echo 'Vercel build completed'",
-    "test": "jest",
-    "db:migrate": "npx prisma migrate dev",
-    "db:generate": "npx prisma generate",
-    "db:seed": "node prisma/seed.js"
+    "quick-start": "node scripts/quick-start.js",
+    "setup": "npm install && npm run compile && npm run test"
+  },
+  "keywords": [
+    "ethereum",
+    "solidity",
+    "defi",
+    "token",
+    "presale",
+    "staking",
+    "dvc666"
+  ],
+  "author": "DVC666 Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@openzeppelin/contracts": "^4.9.3",
+    "@openzeppelin/hardhat-upgrades": "^1.28.0",
+    "chai": "^4.3.8",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.17.2",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.4",
+    "nodemon": "^3.0.1"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.7.1",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "helmet": "^7.0.0",
     "morgan": "^1.10.0",
-    "dotenv": "^16.3.1",
-    "ethers": "^5.7.2",
-    "web3": "^4.1.1",
-    "@prisma/client": "^5.2.0",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "express-rate-limit": "^6.10.0",
-    "express-validator": "^7.0.1",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.4",
-    "socket.io": "^4.7.2",
-    "redis": "^4.6.8",
-    "winston": "^3.10.0",
-    "compression": "^1.7.4",
-    "swagger-ui-express": "^5.0.0",
-    "swagger-jsdoc": "^6.2.8",
-    "crypto": "^1.0.1",
-    "node-cron": "^3.0.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1",
-    "jest": "^29.6.4",
-    "supertest": "^6.3.3",
-    "prisma": "^5.2.0"
-  },
-  "author": "Devil's Coin Team",
-  "license": "MIT"
+    "compression": "^1.7.4"
+  }
 }
 
