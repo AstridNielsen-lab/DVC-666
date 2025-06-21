@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { FaFire, FaCoins, FaRocket, FaShieldAlt, FaChartLine, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Logo from '../components/Logo';
+import useTranslation from '../hooks/useTranslation';
 
 const Home = () => {
+  const { t } = useTranslation();
   const [currentPrice, setCurrentPrice] = useState('0.00010382');
   const [priceUSD, setPriceUSD] = useState('0.249');
   const [totalSupply] = useState('100,000,000');
@@ -73,46 +75,44 @@ const Home = () => {
             <HeroTitle>
               <Logo size="80px" color="#8B0000" />
               <TitleText>
-                DVC
-                <HeroSubtitle>Devil's Coin</HeroSubtitle>
+                {t('hero.title')}
+                <HeroSubtitle>{t('hero.subtitle')}</HeroSubtitle>
               </TitleText>
             </HeroTitle>
             
             <HeroDescription>
-              Embrace innovation, unleash true value. A next-generation cryptocurrency 
-              built on advanced Proof-of-Stake technology with industry-leading security 
-              and sustainable rewards for long-term holders.
+              {t('hero.description')}
             </HeroDescription>
             
             <HeroStats>
               <StatItem>
                 <StatValue>{currentPrice} ETH</StatValue>
                 <StatSubValue>${priceUSD} USD</StatSubValue>
-                <StatLabel>Current Price</StatLabel>
+                <StatLabel>{t('hero.stats.price')}</StatLabel>
               </StatItem>
               <StatItem>
                 <StatValue>${marketCap}</StatValue>
-                <StatSubValue>${tradingVolume} 24h Vol</StatSubValue>
-                <StatLabel>Market Cap</StatLabel>
+                <StatSubValue>${tradingVolume} {t('hero.stats.volume')}</StatSubValue>
+                <StatLabel>{t('hero.stats.marketCap')}</StatLabel>
               </StatItem>
               <StatItem>
                 <StatValue>{stakingAPY}%</StatValue>
-                <StatSubValue>30-day lock</StatSubValue>
-                <StatLabel>Staking APY</StatLabel>
+                <StatSubValue>{t('hero.stats.stakingPeriod')}</StatSubValue>
+                <StatLabel>{t('hero.stats.staking')}</StatLabel>
               </StatItem>
               <StatItem>
                 <StatValue>{activeUsers.toLocaleString()}</StatValue>
-                <StatSubValue>{(soldTokens/1000000).toFixed(1)}M Tokens Sold</StatSubValue>
-                <StatLabel>Community</StatLabel>
+                <StatSubValue>{(soldTokens/1000000).toFixed(1)}M {t('hero.stats.tokensSold')}</StatSubValue>
+                <StatLabel>{t('hero.stats.community')}</StatLabel>
               </StatItem>
             </HeroStats>
             
             <HeroButtons>
               <PrimaryButton as={Link} to="/presale">
-                <FaRocket /> Join Presale
+                <FaRocket /> {t('hero.buttons.joinPresale')}
               </PrimaryButton>
               <SecondaryButton as={Link} to="/staking">
-                <FaCoins /> Start Staking
+                <FaCoins /> {t('hero.buttons.startStaking')}
               </SecondaryButton>
             </HeroButtons>
           </motion.div>
@@ -121,7 +121,7 @@ const Home = () => {
 
       <FeaturesSection>
         <SectionTitle>
-          <FaFire /> Key Features
+          <FaFire /> {t('features.title')}
         </SectionTitle>
         
         <FeaturesGrid>
@@ -131,10 +131,9 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <FeatureIcon><FaShieldAlt /></FeatureIcon>
-            <FeatureTitle>Advanced Security</FeatureTitle>
+            <FeatureTitle>{t('features.security.title')}</FeatureTitle>
             <FeatureDescription>
-              Industry-leading security protocols with comprehensive audits and a 
-              battle-tested infrastructure for maximum asset protection.
+              {t('features.security.description')}
             </FeatureDescription>
           </FeatureCard>
           
@@ -144,10 +143,9 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <FeatureIcon><FaCoins /></FeatureIcon>
-            <FeatureTitle>Rewarding Staking</FeatureTitle>
+            <FeatureTitle>{t('features.staking.title')}</FeatureTitle>
             <FeatureDescription>
-              Earn competitive {stakingAPY}% APY returns with our flexible staking program. 
-              Options for short-term and long-term holders with compounding rewards.
+              {t('features.staking.description').replace('{apy}', stakingAPY)}
             </FeatureDescription>
           </FeatureCard>
           
@@ -157,10 +155,9 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <FeatureIcon><FaChartLine /></FeatureIcon>
-            <FeatureTitle>Tokenomics</FeatureTitle>
+            <FeatureTitle>{t('features.tokenomics.title')}</FeatureTitle>
             <FeatureDescription>
-              Sustainable tokenomics with built-in deflationary mechanisms and strategic 
-              buyback programs to support long-term price stability.
+              {t('features.tokenomics.description')}
             </FeatureDescription>
           </FeatureCard>
           
@@ -170,60 +167,59 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <FeatureIcon><FaUsers /></FeatureIcon>
-            <FeatureTitle>Community Governance</FeatureTitle>
+            <FeatureTitle>{t('features.governance.title')}</FeatureTitle>
             <FeatureDescription>
-              Democratic governance model where token holders vote on key decisions,
-              protocol upgrades, and fund allocations through our DAO structure.
+              {t('features.governance.description')}
             </FeatureDescription>
           </FeatureCard>
         </FeaturesGrid>
       </FeaturesSection>
 
       <TokenomicsSection>
-        <SectionTitle>Tokenomics & Distribution</SectionTitle>
+        <SectionTitle>{t('tokenomics.title')}</SectionTitle>
         
         <TokenomicsGrid>
           <TokenomicsCard>
-            <TokenomicsTitle>Token Distribution</TokenomicsTitle>
+            <TokenomicsTitle>{t('tokenomics.distribution.title')}</TokenomicsTitle>
             <TokenomicsChart>
-              <ChartSlice color="#8B0000" width="30%">30% Liquidity Pool</ChartSlice>
-              <ChartSlice color="#B22222" width="25%">25% Staking Rewards</ChartSlice>
-              <ChartSlice color="#DC143C" width="20%">20% Public Sale</ChartSlice>
-              <ChartSlice color="#FF4500" width="10%">10% Team & Advisors</ChartSlice>
-              <ChartSlice color="#FF8C00" width="10%">10% Marketing & Partnerships</ChartSlice>
-              <ChartSlice color="#FFD700" width="5%">5% Community Reserve</ChartSlice>
+              <ChartSlice color="#8B0000" width="30%">30% {t('tokenomics.distribution.liquidity')}</ChartSlice>
+              <ChartSlice color="#B22222" width="25%">25% {t('tokenomics.distribution.staking')}</ChartSlice>
+              <ChartSlice color="#DC143C" width="20%">20% {t('tokenomics.distribution.publicSale')}</ChartSlice>
+              <ChartSlice color="#FF4500" width="10%">10% {t('tokenomics.distribution.team')}</ChartSlice>
+              <ChartSlice color="#FF8C00" width="10%">10% {t('tokenomics.distribution.marketing')}</ChartSlice>
+              <ChartSlice color="#FFD700" width="5%">5% {t('tokenomics.distribution.community')}</ChartSlice>
             </TokenomicsChart>
           </TokenomicsCard>
           
           <TokenomicsCard>
-            <TokenomicsTitle>Key Metrics</TokenomicsTitle>
+            <TokenomicsTitle>{t('tokenomics.metrics.title')}</TokenomicsTitle>
             <MetricsList>
               <MetricItem>
-                <MetricLabel>Total Supply:</MetricLabel>
+                <MetricLabel>{t('tokenomics.metrics.totalSupply')}:</MetricLabel>
                 <MetricValue>100,000,000 DVC</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Tokens Sold:</MetricLabel>
+                <MetricLabel>{t('tokenomics.metrics.tokensSold')}:</MetricLabel>
                 <MetricValue>{soldTokens.toLocaleString()} DVC</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Initial Price:</MetricLabel>
-                <MetricValue>$0.18 USD</MetricValue>
+                <MetricLabel>{t('tokenomics.metrics.initialPrice')}:</MetricLabel>
+                <MetricValue>0.00010382 ETH</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Blockchain:</MetricLabel>
+                <MetricLabel>{t('tokenomics.metrics.blockchain')}:</MetricLabel>
                 <MetricValue>Ethereum (ERC-20)</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Transaction Fee:</MetricLabel>
+                <MetricLabel>{t('tokenomics.metrics.transactionFee')}:</MetricLabel>
                 <MetricValue>0.5%</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Staking Options:</MetricLabel>
+                <MetricLabel>{t('tokenomics.metrics.stakingOptions')}:</MetricLabel>
                 <MetricValue>30/60/90 days</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Max APY:</MetricLabel>
+                <MetricLabel>{t('tokenomics.metrics.maxApy')}:</MetricLabel>
                 <MetricValue>12.5% (90-day lock)</MetricValue>
               </MetricItem>
             </MetricsList>
@@ -231,98 +227,124 @@ const Home = () => {
         </TokenomicsGrid>
       </TokenomicsSection>
 
+      <MultiTokenSection>
+        <SectionTitle>{t('multiToken.title')}</SectionTitle>
+        <MultiTokenDescription>
+          {t('multiToken.description')}
+        </MultiTokenDescription>
+        
+        <MultiTokenGrid>
+          <MultiTokenCard>
+            <MultiTokenIcon>📊</MultiTokenIcon>
+            <MultiTokenTitle>{t('multiToken.priceCalculation')}</MultiTokenTitle>
+            <MultiTokenText>{t('multiToken.priceDetail')}</MultiTokenText>
+          </MultiTokenCard>
+          
+          <MultiTokenCard>
+            <MultiTokenIcon>🔄</MultiTokenIcon>
+            <MultiTokenTitle>{t('multiToken.distribution')}</MultiTokenTitle>
+            <MultiTokenText>{t('multiToken.distributionDetail')}</MultiTokenText>
+          </MultiTokenCard>
+          
+          <MultiTokenCard>
+            <MultiTokenIcon>📈</MultiTokenIcon>
+            <MultiTokenTitle>{t('multiToken.fibonacci')}</MultiTokenTitle>
+            <MultiTokenText>{t('multiToken.fibonacciDetail')}</MultiTokenText>
+          </MultiTokenCard>
+        </MultiTokenGrid>
+      </MultiTokenSection>
+
       <RoadmapSection>
-        <SectionTitle>Strategic Roadmap</SectionTitle>
+        <SectionTitle>{t('roadmap.title')}</SectionTitle>
         
         <RoadmapTimeline>
           <RoadmapItem>
-            <RoadmapPhase>Q2 2025 - Genesis</RoadmapPhase>
+            <RoadmapPhase>{t('roadmap.phase1.title')}</RoadmapPhase>
             <RoadmapTasks>
-              <Task completed>✓ Smart Contract Development</Task>
-              <Task completed>✓ Frontend dApp Creation</Task>
-              <Task completed>✓ Backend API Implementation</Task>
-              <Task>🔥 Presale Launch</Task>
-              <Task>🔥 Mainnet Deployment</Task>
+              <Task completed>✓ {t('roadmap.phase1.task1')}</Task>
+              <Task completed>✓ {t('roadmap.phase1.task2')}</Task>
+              <Task completed>✓ {t('roadmap.phase1.task3')}</Task>
+              <Task>🔥 {t('roadmap.phase1.task4')}</Task>
+              <Task>🔥 {t('roadmap.phase1.task5')}</Task>
             </RoadmapTasks>
           </RoadmapItem>
           
           <RoadmapItem>
-            <RoadmapPhase>Q3 2025 - Expansion</RoadmapPhase>
+            <RoadmapPhase>{t('roadmap.phase2.title')}</RoadmapPhase>
             <RoadmapTasks>
-              <Task>📱 Mobile Wallet App</Task>
-              <Task>🔗 Exchange Listings</Task>
-              <Task>🏛️ Governance Platform</Task>
-              <Task>🎮 Gaming Integration</Task>
+              <Task>📱 {t('roadmap.phase2.task1')}</Task>
+              <Task>🔗 {t('roadmap.phase2.task2')}</Task>
+              <Task>🏛️ {t('roadmap.phase2.task3')}</Task>
+              <Task>🎮 {t('roadmap.phase2.task4')}</Task>
             </RoadmapTasks>
           </RoadmapItem>
           
           <RoadmapItem>
-            <RoadmapPhase>Q4 2025 - Domination</RoadmapPhase>
+            <RoadmapPhase>{t('roadmap.phase3.title')}</RoadmapPhase>
             <RoadmapTasks>
-              <Task>🌉 Cross-chain Bridges</Task>
-              <Task>🎨 NFT Marketplace</Task>
-              <Task>💸 Lending Protocol</Task>
-              <Task>🔮 Prediction Markets</Task>
+              <Task>🌉 {t('roadmap.phase3.task1')}</Task>
+              <Task>🎨 {t('roadmap.phase3.task2')}</Task>
+              <Task>💸 {t('roadmap.phase3.task3')}</Task>
+              <Task>🔮 {t('roadmap.phase3.task4')}</Task>
             </RoadmapTasks>
           </RoadmapItem>
           <RoadmapItem>
-            <RoadmapPhase>Q1 2026 - Ecosystem Expansion</RoadmapPhase>
+            <RoadmapPhase>{t('roadmap.phase4.title')}</RoadmapPhase>
             <RoadmapTasks>
-              <Task>🌐 Global Marketing Campaign</Task>
-              <Task>🏆 Major Exchange Listings</Task>
-              <Task>🔄 Cross-chain Interoperability</Task>
-              <Task>🤝 Strategic Partnerships</Task>
+              <Task>🌐 {t('roadmap.phase4.task1')}</Task>
+              <Task>🏆 {t('roadmap.phase4.task2')}</Task>
+              <Task>🔄 {t('roadmap.phase4.task3')}</Task>
+              <Task>🤝 {t('roadmap.phase4.task4')}</Task>
             </RoadmapTasks>
           </RoadmapItem>
         </RoadmapTimeline>
       </RoadmapSection>
       
       <TokenUtilitySection>
-        <SectionTitle>Token Utility & Ecosystem</SectionTitle>
+        <SectionTitle>{t('utility.title')}</SectionTitle>
         <UtilityDescription>
-          DVC is more than just a cryptocurrency - it's a utility token powering a complete ecosystem of financial services and decentralized applications.
+          {t('utility.description')}
         </UtilityDescription>
         
         <UtilityGrid>
           <UtilityCard>
             <UtilityIcon>💱</UtilityIcon>
-            <UtilityTitle>Trading & Payments</UtilityTitle>
-            <UtilityText>Fast, secure transactions with minimal fees across our entire ecosystem of partners and merchants.</UtilityText>
+            <UtilityTitle>{t('utility.trading.title')}</UtilityTitle>
+            <UtilityText>{t('utility.trading.description')}</UtilityText>
           </UtilityCard>
           
           <UtilityCard>
             <UtilityIcon>🔐</UtilityIcon>
-            <UtilityTitle>Staking & Rewards</UtilityTitle>
-            <UtilityText>Lock your tokens to earn competitive APY and gain access to premium features and services.</UtilityText>
+            <UtilityTitle>{t('utility.stakingRewards.title')}</UtilityTitle>
+            <UtilityText>{t('utility.stakingRewards.description')}</UtilityText>
           </UtilityCard>
           
           <UtilityCard>
             <UtilityIcon>🏛️</UtilityIcon>
-            <UtilityTitle>Governance & Voting</UtilityTitle>
-            <UtilityText>Participate in key decision-making processes with voting power proportional to your holdings.</UtilityText>
+            <UtilityTitle>{t('utility.governance.title')}</UtilityTitle>
+            <UtilityText>{t('utility.governance.description')}</UtilityText>
           </UtilityCard>
           
           <UtilityCard>
             <UtilityIcon>🎮</UtilityIcon>
-            <UtilityTitle>Gaming & NFTs</UtilityTitle>
-            <UtilityText>Use DVC tokens in our gaming ecosystem and exclusive NFT marketplace for digital collectibles.</UtilityText>
+            <UtilityTitle>{t('utility.gaming.title')}</UtilityTitle>
+            <UtilityText>{t('utility.gaming.description')}</UtilityText>
           </UtilityCard>
         </UtilityGrid>
       </TokenUtilitySection>
 
       <CTASection>
         <CTAContent>
-          <CTATitle>Ready to Join the Financial Revolution?</CTATitle>
+          <CTATitle>{t('cta.title')}</CTATitle>
           <CTADescription>
-            Join over 5,000 users already experiencing the benefits of DVC. 
-            Secure your position in the next generation of digital finance today.
+            {t('cta.description')}
           </CTADescription>
           <CTAButtons>
             <PrimaryButton as={Link} to="/presale">
-              <FaFire /> Buy DVC Now
+              <FaFire /> {t('cta.buyButton')}
             </PrimaryButton>
             <SecondaryButton as={Link} to="/whitepaper">
-              📄 Read Whitepaper
+              📄 {t('cta.whitepaperButton')}
             </SecondaryButton>
           </CTAButtons>
         </CTAContent>
@@ -724,6 +746,60 @@ const CTAButtons = styled.div`
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+`;
+
+// Multi-token section for 9-token system
+const MultiTokenSection = styled.section`
+  padding: 6rem 2rem;
+  background: ${props => props.theme.colors.backgroundSecondary};
+  text-align: center;
+`;
+
+const MultiTokenDescription = styled.p`
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  font-size: 1.1rem;
+  color: ${props => props.theme.colors.text.secondary};
+  line-height: 1.6;
+`;
+
+const MultiTokenGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const MultiTokenCard = styled.div`
+  background: ${props => props.theme.colors.glass.background};
+  backdrop-filter: ${props => props.theme.colors.glass.backdropFilter};
+  border: ${props => props.theme.colors.glass.border};
+  border-radius: 1rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const MultiTokenIcon = styled.div`
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+`;
+
+const MultiTokenTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: ${props => props.theme.colors.primary};
+`;
+
+const MultiTokenText = styled.p`
+  color: ${props => props.theme.colors.text.secondary};
+  line-height: 1.5;
 `;
 
 // Additional styled components for new sections

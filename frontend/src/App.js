@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { Toaster } from 'react-hot-toast';
 import styled, { ThemeProvider } from 'styled-components';
 import { motion } from 'framer-motion';
+import { TranslationProvider } from './contexts/TranslationContext';
 
 // Components
 import Navbar from './components/Navbar';
@@ -71,7 +72,8 @@ function App() {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <ThemeProvider theme={darkTheme}>
-        <Router>
+        <TranslationProvider>
+          <Router>
           <AppContainer>
             <GlobalStyles />
             <ParticleBackground />
@@ -126,7 +128,8 @@ function App() {
               }}
             />
           </AppContainer>
-        </Router>
+          </Router>
+        </TranslationProvider>
       </ThemeProvider>
     </Web3ReactProvider>
   );

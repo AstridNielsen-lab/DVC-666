@@ -1,72 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaGlobe, FaCaretDown } from 'react-icons/fa';
+import useTranslation from '../hooks/useTranslation';
 
+// Define language information
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
   { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+  // Only include languages we have translations for now
+  // We can add these back when we add more translations
+  // { code: 'es', name: 'Español', flag: '🇪🇸' },
+  // { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  // { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  // { code: 'zh', name: '中文', flag: '🇨🇳' },
+  // { code: 'ja', name: '日本語', flag: '🇯🇵' },
+  // { code: 'ru', name: 'Русский', flag: '🇷🇺' },
 ];
 
 const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState({ code: 'en', name: 'English', flag: '🇺🇸' });
-
+  const { currentLanguage: activeLanguage, changeLanguage } = useTranslation();
+  
+  // Find the current language object in our languages array
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    languages.find(lang => lang.code === activeLanguage) || languages[0]
+  );
+  
+  // Update selected language when the context language changes
   useEffect(() => {
-    // Check if browser language is supported
-    const browserLang = navigator.language.split('-')[0];
-    const matchedLang = languages.find(lang => lang.code === browserLang);
-    
-    if (matchedLang) {
-      setCurrentLanguage(matchedLang);
+    const langObj = languages.find(lang => lang.code === activeLanguage);
+    if (langObj) {
+      setSelectedLanguage(langObj);
     }
-    
-    // Load Google Translate script
-    const script = document.createElement('script');
-    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    script.async = true;
-    document.body.appendChild(script);
-    
-    // Initialize Google Translate
-    window.googleTranslateElementInit = () => {
-      new window.google.translate.TranslateElement({
-        pageLanguage: 'en',
-        autoDisplay: false,
-        includedLanguages: languages.map(l => l.code).join(','),
-        layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-    };
-    
-    return () => {
-      document.body.removeChild(script);
-      delete window.googleTranslateElementInit;
-    };
-  }, []);
-
-  const changeLanguage = (language) => {
-    setCurrentLanguage(language);
+  }, [activeLanguage]);
+  
+  // Handle language selection
+  const handleLanguageChange = (language) => {
+    setSelectedLanguage(language);
     setIsOpen(false);
-    
-    // Use Google Translate API to change language
-    if (window.google && window.google.translate) {
-      const select = document.querySelector('.goog-te-combo');
-      if (select) {
-        select.value = language.code;
-        select.dispatchEvent(new Event('change'));
-      }
-    }
+    changeLanguage(language.code);
   };
 
   return (
     <LanguageSelectorContainer>
       <CurrentLanguage onClick={() => setIsOpen(!isOpen)}>
-        <span>{currentLanguage.flag}</span>
-        <span className="lang-name">{currentLanguage.name}</span>
+        <span>{selectedLanguage.flag}</span>
+        <span className="lang-name">{selectedLanguage.name}</span>
         <FaCaretDown />
       </CurrentLanguage>
       
@@ -75,8 +54,8 @@ const LanguageSelector = () => {
           {languages.map(language => (
             <LanguageOption 
               key={language.code}
-              onClick={() => changeLanguage(language)}
-              isActive={currentLanguage.code === language.code}
+              onClick={() => handleLanguageChange(language)}
+              isActive={selectedLanguage.code === language.code}
             >
               <span className="flag">{language.flag}</span>
               <span className="name">{language.name}</span>
@@ -84,8 +63,6 @@ const LanguageSelector = () => {
           ))}
         </LanguageDropdown>
       )}
-      
-      <div id="google_translate_element" style={{ display: 'none' }}></div>
     </LanguageSelectorContainer>
   );
 };

@@ -5,20 +5,22 @@ import { motion } from 'framer-motion';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import Logo from './Logo';
 import LanguageSelector from './LanguageSelector';
+import useTranslation from '../hooks/useTranslation';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   const navItems = [
-    { path: '/', label: 'Home', icon: '🏠' },
-    { path: '/presale', label: 'Presale', icon: '🔥' },
-    { path: '/staking', label: 'Staking', icon: '🥩' },
-    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/wallet', label: 'Carteiras', icon: '💼' },
-    { path: '/evolution', label: 'Evolução', icon: '📈' },
-    { path: '/whitepaper', label: 'Whitepaper', icon: '📄' },
-    { path: '/about', label: 'About', icon: 'ℹ️' }
+    { path: '/', label: t('nav.home'), icon: '🏠' },
+    { path: '/presale', label: t('nav.presale'), icon: '🔥' },
+    { path: '/staking', label: t('nav.staking'), icon: '🥩' },
+    { path: '/dashboard', label: t('nav.dashboard'), icon: '📊' },
+    { path: '/wallet', label: t('nav.wallet'), icon: '💼' },
+    { path: '/evolution', label: t('nav.evolution'), icon: '📈' },
+    { path: '/whitepaper', label: t('nav.whitepaper'), icon: '📄' },
+    { path: '/about', label: t('nav.about'), icon: 'ℹ️' }
   ];
 
 
@@ -28,8 +30,8 @@ const Navbar = () => {
         <LogoContainer as={Link} to="/">
           <Logo size="40px" color="#8B0000" />
           <LogoText>
-            DVC666
-            <LogoSubtext>Devil's Coin</LogoSubtext>
+            {t('hero.title')}
+            <LogoSubtext>{t('hero.subtitle')}</LogoSubtext>
           </LogoText>
         </LogoContainer>
 
