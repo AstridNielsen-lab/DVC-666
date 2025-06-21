@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 
 /**
  * @title DVC666 - Devil's Coin 666
  * @dev Advanced ERC20 token with presale, staking, and evolution mechanics
  * @author DVC666 Team
  */
-contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
-    using SafeMath for uint256;
+contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable2Step, ReentrancyGuard {
 
     // ========== CONSTANTS ==========
     uint256 public constant TOTAL_SUPPLY = 66_666_666 * 10**18; // 66,666,666 tokens
@@ -97,12 +96,11 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
     }
 
     // ========== CONSTRUCTOR ==========
-    constructor(address _owner) ERC20("Devil's Coin 666", "DVC666") {
-        _transferOwnership(_owner);
+    constructor(address _owner) ERC20("Devil's Coin 666", "DVC666") Ownable(_owner) Ownable2Step() {
         
         // Mint initial supply distribution
         _mint(_owner, TEAM_RESERVE);
-        _mint(address(this), PRESALE_SUPPLY.add(STAKING_REWARDS));
+        _mint(address(this), PRESALE_SUPPLY + STAKING_REWARDS);
         _mint(_owner, LIQUIDITY_POOL);
         
         // Initialize evolution system
@@ -110,8 +108,8 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         nextEvolutionTime = block.timestamp + 365 days / 9; // ~40 days per evolution
         
         // Set transaction limits
-        maxTransactionAmount = TOTAL_SUPPLY.mul(1).div(100); // 1% of supply
-        maxWalletAmount = TOTAL_SUPPLY.mul(2).div(100); // 2% of supply
+        maxTransactionAmount = TOTAL_SUPPLY * 1 / 100; // 1% of supply
+        maxWalletAmount = TOTAL_SUPPLY * 2 / 100; // 2% of supply
         
         // Authorize owner
         authorized[_owner] = true;
@@ -128,7 +126,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         
         presaleActive = true;
         presaleStartTime = block.timestamp;
-        presaleEndTime = block.timestamp.add(_duration);
+        presaleEndTime = block.timestamp + _duration;
         
         emit PresaleStarted(presaleStartTime, presaleEndTime);
     }
@@ -151,10 +149,10 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         require(msg.value <= MAX_PURCHASE, "Above maximum purchase");
         
         uint256 tokenAmount = getTokenAmount(msg.value);
-        require(presaleSold.add(tokenAmount) <= PRESALE_SUPPLY, "Exceeds presale supply");
+        require(presaleSold + tokenAmount <= PRESALE_SUPPLY, "Exceeds presale supply");
         
-        presaleSold = presaleSold.add(tokenAmount);
-        presalePurchases[msg.sender] = presalePurchases[msg.sender].add(tokenAmount);
+        presaleSold = presaleSold + tokenAmount;
+        presalePurchases[msg.sender] = presalePurchases[msg.sender] + tokenAmount;
         
         _transfer(address(this), msg.sender, tokenAmount);
         
@@ -169,13 +167,13 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         require(msg.value <= MAX_PURCHASE, "Above maximum purchase");
         
         uint256 baseTokenAmount = getTokenAmount(msg.value);
-        uint256 bonus = baseTokenAmount.mul(evolutionBonuses[currentEvolution]).div(10000);
-        uint256 totalTokenAmount = baseTokenAmount.add(bonus);
+        uint256 bonus = baseTokenAmount * evolutionBonuses[currentEvolution] / 10000;
+        uint256 totalTokenAmount = baseTokenAmount + bonus;
         
-        require(presaleSold.add(totalTokenAmount) <= PRESALE_SUPPLY, "Exceeds presale supply");
+        require(presaleSold + totalTokenAmount <= PRESALE_SUPPLY, "Exceeds presale supply");
         
-        presaleSold = presaleSold.add(totalTokenAmount);
-        presalePurchases[msg.sender] = presalePurchases[msg.sender].add(totalTokenAmount);
+        presaleSold = presaleSold + totalTokenAmount;
+        presalePurchases[msg.sender] = presalePurchases[msg.sender] + totalTokenAmount;
         
         _transfer(address(this), msg.sender, totalTokenAmount);
         
@@ -186,14 +184,14 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
      * @dev Calculate token amount for ETH
      */
     function getTokenAmount(uint256 ethAmount) public pure returns (uint256) {
-        return ethAmount.mul(10**18).div(PRESALE_PRICE);
+        return ethAmount * 10**18 / PRESALE_PRICE;
     }
     
     /**
      * @dev Calculate ETH cost for tokens
      */
     function getETHCost(uint256 tokenAmount) public pure returns (uint256) {
-        return tokenAmount.mul(PRESALE_PRICE).div(10**18);
+        return tokenAmount * PRESALE_PRICE / 10**18;
     }
 
     // ========== STAKING FUNCTIONS ==========
@@ -211,7 +209,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         StakeInfo storage userStake = stakes[msg.sender];
         
         if (userStake.active) {
-            userStake.amount = userStake.amount.add(amount);
+            userStake.amount = userStake.amount + amount;
         } else {
             userStake.amount = amount;
             userStake.stakingTime = block.timestamp;
@@ -219,7 +217,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         }
         
         userStake.lastRewardTime = block.timestamp;
-        totalStaked = totalStaked.add(amount);
+        totalStaked = totalStaked + amount;
         
         _transfer(msg.sender, address(this), amount);
         
@@ -233,7 +231,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         StakeInfo storage userStake = stakes[msg.sender];
         require(userStake.active, "No active stake");
         require(userStake.amount >= amount, "Insufficient staked amount");
-        require(block.timestamp >= userStake.stakingTime.add(STAKING_DURATION), "Staking period not completed");
+        require(block.timestamp >= userStake.stakingTime + STAKING_DURATION, "Staking period not completed");
         
         // Update and claim pending rewards
         _updateRewards(msg.sender);
@@ -241,8 +239,8 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
             _claimRewards(msg.sender);
         }
         
-        userStake.amount = userStake.amount.sub(amount);
-        totalStaked = totalStaked.sub(amount);
+        userStake.amount = userStake.amount - amount;
+        totalStaked = totalStaked - amount;
         
         if (userStake.amount == 0) {
             userStake.active = false;
@@ -268,10 +266,10 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         StakeInfo storage userStake = stakes[user];
         if (!userStake.active || userStake.amount == 0) return;
         
-        uint256 timeStaked = block.timestamp.sub(userStake.lastRewardTime);
-        uint256 rewards = userStake.amount.mul(STAKING_APY).mul(timeStaked).div(365 days).div(10000);
+        uint256 timeStaked = block.timestamp - userStake.lastRewardTime;
+        uint256 rewards = userStake.amount * STAKING_APY * timeStaked / (365 days) / 10000;
         
-        userStake.pendingRewards = userStake.pendingRewards.add(rewards);
+        userStake.pendingRewards = userStake.pendingRewards + rewards;
         userStake.lastRewardTime = block.timestamp;
     }
     
@@ -284,7 +282,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         
         uint256 rewards = userStake.pendingRewards;
         userStake.pendingRewards = 0;
-        totalRewardsDistributed = totalRewardsDistributed.add(rewards);
+        totalRewardsDistributed = totalRewardsDistributed + rewards;
         
         _transfer(address(this), user, rewards);
         
@@ -301,8 +299,8 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         require(currentEvolution < 9, "Max evolution reached");
         
         currentEvolution++;
-        evolutionBonuses[currentEvolution] = evolutionBonuses[currentEvolution - 1].add(50); // +0.5% each evolution
-        nextEvolutionTime = block.timestamp.add(365 days / 9);
+        evolutionBonuses[currentEvolution] = evolutionBonuses[currentEvolution - 1] + 50; // +0.5% each evolution
+        nextEvolutionTime = block.timestamp + 365 days / 9;
         
         emit EvolutionTriggered(currentEvolution, evolutionBonuses[currentEvolution]);
     }
@@ -363,7 +361,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         require(balanceOf(address(this)) >= amount, "Insufficient contract balance");
         
         _burn(address(this), amount);
-        burnedTokens = burnedTokens.add(amount);
+        burnedTokens = burnedTokens + amount;
         
         emit TokensBurned(amount);
     }
@@ -382,7 +380,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         return (
             PRESALE_PRICE,
             presaleSold,
-            PRESALE_SUPPLY.sub(presaleSold),
+            PRESALE_SUPPLY - presaleSold,
             presaleActive && block.timestamp >= presaleStartTime && block.timestamp <= presaleEndTime
         );
     }
@@ -391,7 +389,7 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
      * @dev Get presale progress
      */
     function getPresaleProgress() external view returns (uint256) {
-        return presaleSold.mul(10000).div(PRESALE_SUPPLY); // Returns percentage in basis points
+        return presaleSold * 10000 / PRESALE_SUPPLY; // Returns percentage in basis points
     }
     
     /**
@@ -414,16 +412,16 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         
         uint256 pending = userStake.pendingRewards;
         if (userStake.active && userStake.amount > 0) {
-            uint256 timeStaked = block.timestamp.sub(userStake.lastRewardTime);
-            uint256 newRewards = userStake.amount.mul(STAKING_APY).mul(timeStaked).div(365 days).div(10000);
-            pending = pending.add(newRewards);
+            uint256 timeStaked = block.timestamp - userStake.lastRewardTime;
+            uint256 newRewards = userStake.amount * STAKING_APY * timeStaked / (365 days) / 10000;
+            pending = pending + newRewards;
         }
         
         return (
             userStake.amount,
             pending,
             userStake.stakingTime,
-            userStake.stakingTime.add(STAKING_DURATION)
+            userStake.stakingTime + STAKING_DURATION
         );
     }
     
@@ -434,10 +432,10 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
         StakeInfo memory userStake = stakes[user];
         if (!userStake.active || userStake.amount == 0) return userStake.pendingRewards;
         
-        uint256 timeStaked = block.timestamp.sub(userStake.lastRewardTime);
-        uint256 newRewards = userStake.amount.mul(STAKING_APY).mul(timeStaked).div(365 days).div(10000);
+        uint256 timeStaked = block.timestamp - userStake.lastRewardTime;
+        uint256 newRewards = userStake.amount * STAKING_APY * timeStaked / (365 days) / 10000;
         
-        return userStake.pendingRewards.add(newRewards);
+        return userStake.pendingRewards + newRewards;
     }
     
     /**
@@ -455,11 +453,13 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 amount
-    ) internal override whenNotPaused notBlacklisted(from) notBlacklisted(to) {
+        uint256 amount,
+        uint256 batchSize
+    ) internal {
+        require(!paused(), "Token transfer while paused");
+        require(!blacklisted[from] && !blacklisted[to], "Address is blacklisted");
         // Allow minting, burning, and contract operations
         if (from == address(0) || to == address(0) || from == address(this) || to == address(this)) {
-            super._beforeTokenTransfer(from, to, amount);
             return;
         }
         
@@ -471,11 +471,9 @@ contract DVC666 is ERC20, ERC20Burnable, Pausable, Ownable, ReentrancyGuard {
             require(amount <= maxTransactionAmount, "Exceeds max transaction amount");
             
             if (to != address(0)) {
-                require(balanceOf(to).add(amount) <= maxWalletAmount, "Exceeds max wallet amount");
+                require(balanceOf(to) + amount <= maxWalletAmount, "Exceeds max wallet amount");
             }
         }
-        
-        super._beforeTokenTransfer(from, to, amount);
     }
     
     /**

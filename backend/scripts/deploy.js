@@ -1,4 +1,5 @@
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
+const { formatEther, parseEther } = ethers;
 require("dotenv").config();
 
 async function main() {
@@ -9,10 +10,10 @@ async function main() {
   console.log(`📋 Deploying with account: ${deployer.address}`);
   
   // Check balance
-  const balance = await deployer.getBalance();
-  console.log(`💰 Account balance: ${ethers.utils.formatEther(balance)} ETH`);
+  const balance = await deployer.provider.getBalance(deployer.address);
+  console.log(`💰 Account balance: ${formatEther(balance)} ETH`);
   
-  if (balance.lt(ethers.utils.parseEther("0.01"))) {
+  if (balance < parseEther("0.01")) {
     console.warn("⚠️  Warning: Low balance detected");
   }
   
@@ -25,19 +26,19 @@ async function main() {
   const dvc666 = await DVC666.deploy(deployer.address);
   
   console.log("⏳ Waiting for deployment confirmation...");
-  await dvc666.deployed();
+  const deployTx = await dvc666.deploymentTransaction();
   
   console.log("\n🎉 DVC666 Contract deployed successfully!");
-  console.log(`📍 Contract address: ${dvc666.address}`);
-  console.log(`🔗 Transaction hash: ${dvc666.deployTransaction.hash}`);
+  console.log(`📍 Contract address: ${await dvc666.getAddress()}`);
+  console.log(`🔗 Transaction hash: ${deployTx.hash}`);
   
   // Get network info
-  const network = await ethers.provider.getNetwork();
-  console.log(`🌐 Network: ${network.name} (Chain ID: ${network.chainId})`);
+  const networkInfo = await deployer.provider.getNetwork();
+  console.log(`🌐 Network: ${networkInfo.name || network.name} (Chain ID: ${networkInfo.chainId})`);
   
   // Wait a few blocks for confirmation
   console.log("⏳ Waiting for block confirmations...");
-  await dvc666.deployTransaction.wait(3);
+  await deployTx.wait(3);
   
   // Verify initial state
   console.log("\n📊 Verifying initial contract state:");
@@ -52,9 +53,9 @@ async function main() {
   console.log(`   Token Name: ${name}`);
   console.log(`   Token Symbol: ${symbol}`);
   console.log(`   Decimals: ${decimals}`);
-  console.log(`   Total Supply: ${ethers.utils.formatEther(totalSupply)} DVC666`);
+  console.log(`   Total Supply: ${formatEther(totalSupply)} DVC666`);
   console.log(`   Owner: ${owner}`);
-  console.log(`   Presale Price: ${ethers.utils.formatEther(presalePrice)} ETH per token`);
+  console.log(`   Presale Price: ${formatEther(presalePrice)} ETH per token`);
   
   // Start presale automatically
   console.log("\n🔥 Starting presale...");
@@ -71,13 +72,13 @@ async function main() {
   
   // Save deployment info
   const deploymentInfo = {
-    network: network.name,
-    chainId: network.chainId,
-    contractAddress: dvc666.address,
-    transactionHash: dvc666.deployTransaction.hash,
+    network: networkInfo.name || network.name,
+    chainId: Number(networkInfo.chainId),
+    contractAddress: await dvc666.getAddress(),
+    transactionHash: deployTx.hash,
     deployerAddress: deployer.address,
-    blockNumber: dvc666.deployTransaction.blockNumber,
-    gasUsed: dvc666.deployTransaction.gasLimit.toString(),
+    blockNumber: deployTx.blockNumber,
+    gasUsed: deployTx.gasLimit.toString(),
     timestamp: new Date().toISOString(),
     presaleActive: true,
     tradingEnabled: true
@@ -118,18 +119,18 @@ async function main() {
     let contractConfig = fs.readFileSync(frontendContractPath, 'utf8');
     
     // Update the contract address for the current network
-    const addressPattern = new RegExp(`(${network.chainId}:\s*["\']).*(["\']),?`, 'g');
+    const addressPattern = new RegExp(`(${Number(networkInfo.chainId)}:\s*["\']).*(["\']),?`, 'g');
     contractConfig = contractConfig.replace(
       addressPattern, 
-      `$1${dvc666.address}$2,`
+      `$1${await dvc666.getAddress()}$2,`
     );
     
     // If localhost deployment, also update default
-    if (network.chainId === 1337) {
+    if (Number(networkInfo.chainId) === 1337) {
       const defaultPattern = /DEFAULT_CONTRACT_ADDRESS = process\.env\.REACT_APP_CONTRACT_ADDRESS \|\| CONTRACT_ADDRESSES\[1337\]/;
       contractConfig = contractConfig.replace(
         defaultPattern,
-        `DEFAULT_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || "${dvc666.address}"`
+        `DEFAULT_CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || "${await dvc666.getAddress()}"`
       );
     }
     
@@ -143,9 +144,9 @@ async function main() {
   console.log("3. Add liquidity to DEX");
   console.log("4. Start marketing the presale");
   
-  if (network.chainId !== 1337) {
+  if (Number(networkInfo.chainId) !== 1337) {
     console.log("\n🔍 To verify on Etherscan:");
-    console.log(`npx hardhat verify --network ${network.name} ${dvc666.address} ${deployer.address}`);
+    console.log(`npx hardhat verify --network ${networkInfo.name || network.name} ${await dvc666.getAddress()} ${deployer.address}`);
   }
   
   console.log("\n🔥 DVC666 is ready to conquer the crypto world! 🔥");

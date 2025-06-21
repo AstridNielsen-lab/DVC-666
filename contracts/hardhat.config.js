@@ -1,5 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("@nomiclabs/hardhat-etherscan");
+require("@nomicfoundation/hardhat-verify");
 require("hardhat-gas-reporter");
 require("solidity-coverage");
 require("dotenv").config();
@@ -7,7 +7,7 @@ require("dotenv").config();
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: "0.8.19",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: process.env.ENABLE_OPTIMIZER === "true",
@@ -117,7 +117,7 @@ module.exports = {
       gas: 8000000
     }
   },
-  etherscan: {
+  verifier: {
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY,
       goerli: process.env.ETHERSCAN_API_KEY,
@@ -137,6 +137,9 @@ module.exports = {
         }
       }
     ]
+  },
+  sourcify: {
+    enabled: true
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS === "true",

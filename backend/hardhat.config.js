@@ -1,11 +1,12 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("@nomiclabs/hardhat-etherscan");
+require("@nomicfoundation/hardhat-verify");
 require("dotenv").config();
+const path = require("path");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: "0.8.19",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,
@@ -47,12 +48,15 @@ module.exports = {
       chainId: 97,
     }
   },
-  etherscan: {
+  verifier: {
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY,
       sepolia: process.env.ETHERSCAN_API_KEY,
       bsc: process.env.BSCSCAN_API_KEY,
     }
+  },
+  sourcify: {
+    enabled: true
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
@@ -62,7 +66,9 @@ module.exports = {
     sources: "./contracts",
     tests: "./test",
     cache: "./cache",
-    artifacts: "./artifacts"
+    artifacts: "./artifacts",
+    // Add explicit path to node_modules
+    node_modules: "./node_modules"
   },
   mocha: {
     timeout: 40000
