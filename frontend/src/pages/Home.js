@@ -6,24 +6,36 @@ import { Link } from 'react-router-dom';
 import Logo from '../components/Logo';
 
 const Home = () => {
-  const [currentPrice, setCurrentPrice] = useState('0.00008250');
-  const [priceUSD, setPriceUSD] = useState('0.198');
+  const [currentPrice, setCurrentPrice] = useState('0.00010382');
+  const [priceUSD, setPriceUSD] = useState('0.249');
   const [totalSupply] = useState('100,000,000');
-  const [soldTokens, setSoldTokens] = useState(1234567);
-  const [stakingAPY] = useState('12.5');
-  const [activeUsers, setActiveUsers] = useState(2847);
+  const [soldTokens, setSoldTokens] = useState(12345678);
+  const [stakingAPY] = useState('8.75');
+  const [activeUsers, setActiveUsers] = useState(5842);
+  const [marketCap, setMarketCap] = useState('24.9M');
+  const [tradingVolume, setTradingVolume] = useState('3.7M');
 
   useEffect(() => {
     // Simulate price updates
     const interval = setInterval(() => {
       const basePrice = 0.00010382;
       const fluctuation = (Math.random() - 0.5) * 0.000001;
-      setCurrentPrice((basePrice + fluctuation).toFixed(8));
+      const newPrice = basePrice + fluctuation;
+      setCurrentPrice(newPrice.toFixed(8));
       
       // Simulate USD price based on ETH price (assuming ETH ~$2400)
       const ethPrice = 2400;
-      const usdPrice = (basePrice + fluctuation) * ethPrice;
+      const usdPrice = newPrice * ethPrice;
       setPriceUSD(usdPrice.toFixed(4));
+      
+      // Update market cap (total supply * price)
+      const mcap = (usdPrice * 100000000) / 1000000;
+      setMarketCap(`${mcap.toFixed(2)}M`);
+      
+      // Simulate trading volume fluctuation
+      const baseVolume = 3.7;
+      const volumeFluctuation = (Math.random() - 0.5) * 0.2;
+      setTradingVolume(`${(baseVolume + volumeFluctuation).toFixed(2)}M`);
     }, 3000);
 
     // Simulate user count updates
@@ -61,14 +73,15 @@ const Home = () => {
             <HeroTitle>
               <Logo size="80px" color="#8B0000" />
               <TitleText>
-                DVC666
+                DVC
                 <HeroSubtitle>Devil's Coin</HeroSubtitle>
               </TitleText>
             </HeroTitle>
             
             <HeroDescription>
-              Embrace the darkness, unleash the value. A next-generation cryptocurrency 
-              built on custom Proof-of-Stake blockchain with devilishly good rewards.
+              Embrace innovation, unleash true value. A next-generation cryptocurrency 
+              built on advanced Proof-of-Stake technology with industry-leading security 
+              and sustainable rewards for long-term holders.
             </HeroDescription>
             
             <HeroStats>
@@ -78,16 +91,19 @@ const Home = () => {
                 <StatLabel>Current Price</StatLabel>
               </StatItem>
               <StatItem>
-                <StatValue>{totalSupply}</StatValue>
-                <StatLabel>Total Supply</StatLabel>
+                <StatValue>${marketCap}</StatValue>
+                <StatSubValue>${tradingVolume} 24h Vol</StatSubValue>
+                <StatLabel>Market Cap</StatLabel>
               </StatItem>
               <StatItem>
                 <StatValue>{stakingAPY}%</StatValue>
+                <StatSubValue>30-day lock</StatSubValue>
                 <StatLabel>Staking APY</StatLabel>
               </StatItem>
               <StatItem>
                 <StatValue>{activeUsers.toLocaleString()}</StatValue>
-                <StatLabel>Active Users</StatLabel>
+                <StatSubValue>{(soldTokens/1000000).toFixed(1)}M Tokens Sold</StatSubValue>
+                <StatLabel>Community</StatLabel>
               </StatItem>
             </HeroStats>
             
@@ -105,7 +121,7 @@ const Home = () => {
 
       <FeaturesSection>
         <SectionTitle>
-          <FaFire /> Infernal Features
+          <FaFire /> Key Features
         </SectionTitle>
         
         <FeaturesGrid>
@@ -115,10 +131,10 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <FeatureIcon><FaShieldAlt /></FeatureIcon>
-            <FeatureTitle>Proof of Stake</FeatureTitle>
+            <FeatureTitle>Advanced Security</FeatureTitle>
             <FeatureDescription>
-              Custom PoS blockchain with 12-second block times for lightning-fast transactions 
-              and minimal energy consumption.
+              Industry-leading security protocols with comprehensive audits and a 
+              battle-tested infrastructure for maximum asset protection.
             </FeatureDescription>
           </FeatureCard>
           
@@ -128,10 +144,10 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <FeatureIcon><FaCoins /></FeatureIcon>
-            <FeatureTitle>Devilish Staking</FeatureTitle>
+            <FeatureTitle>Rewarding Staking</FeatureTitle>
             <FeatureDescription>
-              Lock your tokens for 30 days and earn {stakingAPY}% APY. The longer you hold, 
-              the more hellish your rewards become.
+              Earn competitive {stakingAPY}% APY returns with our flexible staking program. 
+              Options for short-term and long-term holders with compounding rewards.
             </FeatureDescription>
           </FeatureCard>
           
@@ -141,10 +157,10 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <FeatureIcon><FaChartLine /></FeatureIcon>
-            <FeatureTitle>Deflationary</FeatureTitle>
+            <FeatureTitle>Tokenomics</FeatureTitle>
             <FeatureDescription>
-              Built-in token burning mechanisms reduce supply over time, creating 
-              scarcity and potential value appreciation.
+              Sustainable tokenomics with built-in deflationary mechanisms and strategic 
+              buyback programs to support long-term price stability.
             </FeatureDescription>
           </FeatureCard>
           
@@ -154,26 +170,28 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <FeatureIcon><FaUsers /></FeatureIcon>
-            <FeatureTitle>Community Driven</FeatureTitle>
+            <FeatureTitle>Community Governance</FeatureTitle>
             <FeatureDescription>
-              Governance by token holders. Vote on protocol upgrades, staking rates, 
-              and the future direction of the Devil's ecosystem.
+              Democratic governance model where token holders vote on key decisions,
+              protocol upgrades, and fund allocations through our DAO structure.
             </FeatureDescription>
           </FeatureCard>
         </FeaturesGrid>
       </FeaturesSection>
 
       <TokenomicsSection>
-        <SectionTitle>Tokenomics of Darkness</SectionTitle>
+        <SectionTitle>Tokenomics & Distribution</SectionTitle>
         
         <TokenomicsGrid>
           <TokenomicsCard>
             <TokenomicsTitle>Token Distribution</TokenomicsTitle>
             <TokenomicsChart>
-              <ChartSlice color="#8B0000" width="40%">40% Liquidity</ChartSlice>
-              <ChartSlice color="#B22222" width="30%">30% Staking</ChartSlice>
-              <ChartSlice color="#DC143C" width="20%">20% Presale</ChartSlice>
-              <ChartSlice color="#FF4500" width="10%">10% Team</ChartSlice>
+              <ChartSlice color="#8B0000" width="30%">30% Liquidity Pool</ChartSlice>
+              <ChartSlice color="#B22222" width="25%">25% Staking Rewards</ChartSlice>
+              <ChartSlice color="#DC143C" width="20%">20% Public Sale</ChartSlice>
+              <ChartSlice color="#FF4500" width="10%">10% Team & Advisors</ChartSlice>
+              <ChartSlice color="#FF8C00" width="10%">10% Marketing & Partnerships</ChartSlice>
+              <ChartSlice color="#FFD700" width="5%">5% Community Reserve</ChartSlice>
             </TokenomicsChart>
           </TokenomicsCard>
           
@@ -189,20 +207,24 @@ const Home = () => {
                 <MetricValue>{soldTokens.toLocaleString()} DVC</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Block Time:</MetricLabel>
-                <MetricValue>12 seconds</MetricValue>
+                <MetricLabel>Initial Price:</MetricLabel>
+                <MetricValue>$0.18 USD</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Consensus:</MetricLabel>
-                <MetricValue>Proof of Stake</MetricValue>
+                <MetricLabel>Blockchain:</MetricLabel>
+                <MetricValue>Ethereum (ERC-20)</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Staking Reward:</MetricLabel>
-                <MetricValue>{stakingAPY}% APY</MetricValue>
+                <MetricLabel>Transaction Fee:</MetricLabel>
+                <MetricValue>0.5%</MetricValue>
               </MetricItem>
               <MetricItem>
-                <MetricLabel>Lock Period:</MetricLabel>
-                <MetricValue>30 days</MetricValue>
+                <MetricLabel>Staking Options:</MetricLabel>
+                <MetricValue>30/60/90 days</MetricValue>
+              </MetricItem>
+              <MetricItem>
+                <MetricLabel>Max APY:</MetricLabel>
+                <MetricValue>12.5% (90-day lock)</MetricValue>
               </MetricItem>
             </MetricsList>
           </TokenomicsCard>
@@ -210,7 +232,7 @@ const Home = () => {
       </TokenomicsSection>
 
       <RoadmapSection>
-        <SectionTitle>Roadmap to Hell</SectionTitle>
+        <SectionTitle>Strategic Roadmap</SectionTitle>
         
         <RoadmapTimeline>
           <RoadmapItem>
@@ -243,15 +265,57 @@ const Home = () => {
               <Task>🔮 Prediction Markets</Task>
             </RoadmapTasks>
           </RoadmapItem>
+          <RoadmapItem>
+            <RoadmapPhase>Q1 2026 - Ecosystem Expansion</RoadmapPhase>
+            <RoadmapTasks>
+              <Task>🌐 Global Marketing Campaign</Task>
+              <Task>🏆 Major Exchange Listings</Task>
+              <Task>🔄 Cross-chain Interoperability</Task>
+              <Task>🤝 Strategic Partnerships</Task>
+            </RoadmapTasks>
+          </RoadmapItem>
         </RoadmapTimeline>
       </RoadmapSection>
+      
+      <TokenUtilitySection>
+        <SectionTitle>Token Utility & Ecosystem</SectionTitle>
+        <UtilityDescription>
+          DVC is more than just a cryptocurrency - it's a utility token powering a complete ecosystem of financial services and decentralized applications.
+        </UtilityDescription>
+        
+        <UtilityGrid>
+          <UtilityCard>
+            <UtilityIcon>💱</UtilityIcon>
+            <UtilityTitle>Trading & Payments</UtilityTitle>
+            <UtilityText>Fast, secure transactions with minimal fees across our entire ecosystem of partners and merchants.</UtilityText>
+          </UtilityCard>
+          
+          <UtilityCard>
+            <UtilityIcon>🔐</UtilityIcon>
+            <UtilityTitle>Staking & Rewards</UtilityTitle>
+            <UtilityText>Lock your tokens to earn competitive APY and gain access to premium features and services.</UtilityText>
+          </UtilityCard>
+          
+          <UtilityCard>
+            <UtilityIcon>🏛️</UtilityIcon>
+            <UtilityTitle>Governance & Voting</UtilityTitle>
+            <UtilityText>Participate in key decision-making processes with voting power proportional to your holdings.</UtilityText>
+          </UtilityCard>
+          
+          <UtilityCard>
+            <UtilityIcon>🎮</UtilityIcon>
+            <UtilityTitle>Gaming & NFTs</UtilityTitle>
+            <UtilityText>Use DVC tokens in our gaming ecosystem and exclusive NFT marketplace for digital collectibles.</UtilityText>
+          </UtilityCard>
+        </UtilityGrid>
+      </TokenUtilitySection>
 
       <CTASection>
         <CTAContent>
-          <CTATitle>Ready to Embrace the Darkness?</CTATitle>
+          <CTATitle>Ready to Join the Financial Revolution?</CTATitle>
           <CTADescription>
-            Join thousands of users already earning devilish rewards with Devil's Coin. 
-            The revolution starts now.
+            Join over 5,000 users already experiencing the benefits of DVC. 
+            Secure your position in the next generation of digital finance today.
           </CTADescription>
           <CTAButtons>
             <PrimaryButton as={Link} to="/presale">
@@ -660,6 +724,60 @@ const CTAButtons = styled.div`
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+`;
+
+// Additional styled components for new sections
+const TokenUtilitySection = styled.section`
+  padding: 6rem 2rem;
+  background: ${props => props.theme.colors.backgroundSecondary};
+  text-align: center;
+`;
+
+const UtilityDescription = styled.p`
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  font-size: 1.1rem;
+  color: ${props => props.theme.colors.text.secondary};
+  line-height: 1.6;
+`;
+
+const UtilityGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const UtilityCard = styled.div`
+  background: ${props => props.theme.colors.glass.background};
+  backdrop-filter: ${props => props.theme.colors.glass.backdropFilter};
+  border: ${props => props.theme.colors.glass.border};
+  border-radius: 1rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const UtilityIcon = styled.div`
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+`;
+
+const UtilityTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: ${props => props.theme.colors.primary};
+`;
+
+const UtilityText = styled.p`
+  color: ${props => props.theme.colors.text.secondary};
+  line-height: 1.5;
 `;
 
 export default Home;

@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import Logo from './Logo';
+import LanguageSelector from './LanguageSelector';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +48,7 @@ const Navbar = () => {
         </NavItems>
 
         <NavActions>
+          <LanguageSelector />
           <MobileMenuButton
             onClick={() => setIsOpen(!isOpen)}
           >

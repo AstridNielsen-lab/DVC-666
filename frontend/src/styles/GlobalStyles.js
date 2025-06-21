@@ -346,6 +346,36 @@ const GlobalStyles = createGlobalStyle`
   .custom-scroll::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, ${props => props.theme.colors.primaryLight}, ${props => props.theme.colors.secondaryLight});
   }
+
+  /* Google Translate Widget Styling Fixes */
+  .goog-te-gadget {
+    font-family: ${props => props.theme.typography.fontFamily.primary} !important;
+    font-size: 0 !important;
+  }
+
+  .goog-te-gadget img {
+    display: none !important;
+  }
+
+  .goog-te-menu-value span {
+    display: none !important;
+  }
+
+  .goog-te-menu-value span:first-child {
+    display: inline !important;
+  }
+
+  .goog-te-banner-frame {
+    display: none !important;
+  }
+
+  body {
+    top: 0 !important;
+  }
+
+  .skiptranslate {
+    display: none !important;
+  }
 `;
 
 export default GlobalStyles;
